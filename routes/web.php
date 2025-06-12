@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\RoleTestController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,10 +21,22 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
+    
+    // Email Verification Routes
+    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])
+        ->name('verification.notice');
+    
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
+    
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
 });
 
-// RBAC Protected Routes
-Route::middleware(['auth'])->group(function () {
+// RBAC Protected Routes (Require Email Verification)
+Route::middleware(['auth', 'verified'])->group(function () {
     
     // Master Admin only routes
     Route::middleware(['role:master_admin'])->group(function () {

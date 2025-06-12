@@ -41,7 +41,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'manager@example.com',
                 'password' => Hash::make('password'),
                 'role_id' => $clubManagerRole->id,
-                'email_verified_at' => now(),
+                'email_verified_at' => null, // Require email verification
             ]
         );
 
@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'student@example.com',
                 'password' => Hash::make('password'),
                 'role_id' => $studentRole->id,
-                'email_verified_at' => now(),
+                'email_verified_at' => null, // Require email verification
             ]
         );
     }

@@ -47,13 +47,7 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        // Redirect based on user role
-        if ($user->isMasterAdmin()) {
-            return redirect(route('admin.dashboard'));
-        } elseif ($user->isClubManager()) {
-            return redirect(route('club-manager.dashboard'));
-        } else {
-            return redirect(route('student.dashboard'));
-        }
+        // Redirect to email verification notice
+        return redirect(route('verification.notice'))->with('status', 'registration-success');
     }
 }

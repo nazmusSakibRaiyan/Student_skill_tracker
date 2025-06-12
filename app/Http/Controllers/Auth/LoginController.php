@@ -25,12 +25,16 @@ class LoginController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        // Redirect based on user role
         $user = Auth::user();
-        
+
+        // Redirect to email verification notice if not verified
+        if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+
+        // Redirect based on user role
         if ($user->isMasterAdmin()) {
             return redirect()->intended(route('admin.dashboard'));
         } elseif ($user->isClubManager()) {
