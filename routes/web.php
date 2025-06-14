@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\RoleTestController;
+use App\Http\Controllers\ClubController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -61,4 +62,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $user = auth()->user();
         return view('profile', compact('user'));
     })->name('profile');
+    
+    // Club Management - Only admin (master_admin) can create/edit/delete clubs
+    Route::middleware(['role:master_admin'])->group(function () {
+        Route::get('/clubs', [ClubController::class, 'index'])->name('clubs.index');
+        Route::get('/clubs/create', [ClubController::class, 'create'])->name('clubs.create');
+        Route::post('/clubs', [ClubController::class, 'store'])->name('clubs.store');
+        Route::get('/clubs/{id}/edit', [ClubController::class, 'edit'])->name('clubs.edit');
+        Route::put('/clubs/{id}', [ClubController::class, 'update'])->name('clubs.update');
+        Route::delete('/clubs/{id}', [ClubController::class, 'destroy'])->name('clubs.destroy');
+    });
 });

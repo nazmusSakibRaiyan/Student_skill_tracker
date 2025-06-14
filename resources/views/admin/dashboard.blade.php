@@ -41,7 +41,7 @@
                 </div>
             </a>
 
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+            <a href="{{ route('clubs.index') }}" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
                 <div class="flex items-center">
                     <div class="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
                         <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -53,7 +53,7 @@
                         <p class="text-sm text-gray-600 dark:text-gray-400">Oversee all clubs and activities</p>
                     </div>
                 </div>
-            </div>
+            </a>
 
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
                 <div class="flex items-center">
