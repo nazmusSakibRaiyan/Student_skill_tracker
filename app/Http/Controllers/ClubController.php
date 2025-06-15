@@ -53,4 +53,24 @@ class ClubController extends Controller
         $clubs = \App\Models\Club::all();
         return view('admin.clubs', compact('clubs'));
     }
+
+    public function showAssignManagersForm($id)
+    {
+        $club = \App\Models\Club::findOrFail($id);
+        $managers = \App\Models\User::whereHas('role', function($q) { $q->where('name', 'club_manager'); })->get();
+        $assigned = $club->managers->pluck('id')->toArray();
+        return view('admin.assign_managers', compact('club', 'managers', 'assigned'));
+    }
+
+    public function assignManagers(Request $request, $id)
+    {
+        $club = \App\Models\Club::findOrFail($id);
+        $request->validate([
+            'manager_ids' => 'array',
+            'manager_ids.*' => 'exists:users,id',
+        ]);
+        $managerIds = \App\Models\User::whereIn('id', $request->manager_ids ?? [])->whereHas('role', function($q) { $q->where('name', 'club_manager'); })->pluck('id');
+        $club->managers()->sync($managerIds);
+        return redirect()->route('admin.clubs.assign-managers', $club->id)->with('success', 'Managers assigned successfully.');
+    }
 }

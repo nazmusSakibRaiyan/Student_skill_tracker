@@ -59,9 +59,8 @@
                                         <div class="p-4 border border-gray-200 rounded-lg">
                                             <h4 class="font-medium text-gray-900 mb-2">Create New User</h4>
                                             <p class="text-sm text-gray-600 mb-3">Add new users to the system</p>
-                                            <button class="w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-sm">
-                                                Add User
-                                            </button>
+                                            <a href="{{ route('admin.users.create-club-manager') }}" class="block w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 text-sm mb-2 text-center">Add Club Manager</a>
+                                            <a href="{{ route('admin.users.create-student') }}" class="block w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-sm text-center">Add Student</a>
                                         </div>
                                         
                                         <div class="p-4 border border-gray-200 rounded-lg">
@@ -89,106 +88,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <!-- Sample User List -->
-                                <div class="mt-6 bg-white border border-gray-200 rounded-lg p-6">
-                                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Users</h3>
-                                    <div class="overflow-x-auto">
-                                        <table class="min-w-full divide-y divide-gray-200">
-                                            <thead class="bg-gray-50">
-                                                <tr>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="bg-white divide-y divide-gray-200">
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <div class="flex items-center">
-                                                            <div class="h-10 w-10 bg-red-500 rounded-full flex items-center justify-center">
-                                                                <span class="text-white font-medium">MA</span>
-                                                            </div>
-                                                            <div class="ml-4">
-                                                                <div class="text-sm font-medium text-gray-900">Master Admin</div>
-                                                                <div class="text-sm text-gray-500">admin@example.com</div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">
-                                                            Master Admin
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                            Active
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                        <button class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-                                                        <button class="text-red-600 hover:text-red-900">Delete</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <div class="flex items-center">
-                                                            <div class="h-10 w-10 bg-blue-500 rounded-full flex items-center justify-center">
-                                                                <span class="text-white font-medium">CM</span>
-                                                            </div>
-                                                            <div class="ml-4">
-                                                                <div class="text-sm font-medium text-gray-900">Club Manager</div>
-                                                                <div class="text-sm text-gray-500">manager@example.com</div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                                            Club Manager
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                            Active
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                        <button class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-                                                        <button class="text-red-600 hover:text-red-900">Delete</button>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <div class="flex items-center">
-                                                            <div class="h-10 w-10 bg-green-500 rounded-full flex items-center justify-center">
-                                                                <span class="text-white font-medium">SU</span>
-                                                            </div>
-                                                            <div class="ml-4">
-                                                                <div class="text-sm font-medium text-gray-900">Student User</div>
-                                                                <div class="text-sm text-gray-500">student@example.com</div>
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                            Student
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap">
-                                                        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                                                            Active
-                                                        </span>
-                                                    </td>
-                                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                        <button class="text-indigo-600 hover:text-indigo-900 mr-3">Edit</button>
-                                                        <button class="text-red-600 hover:text-red-900">Delete</button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
                             </div>
                             
                             <!-- Quick Stats -->
@@ -198,15 +97,7 @@
                                     <div class="space-y-4">
                                         <div class="flex justify-between items-center">
                                             <span class="text-sm text-gray-600">Total Users</span>
-                                            <span class="text-2xl font-bold text-gray-900">47</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-sm text-gray-600">Active Users</span>
-                                            <span class="text-2xl font-bold text-green-600">42</span>
-                                        </div>
-                                        <div class="flex justify-between items-center">
-                                            <span class="text-sm text-gray-600">New This Month</span>
-                                            <span class="text-2xl font-bold text-blue-600">8</span>
+                                            <span class="text-2xl font-bold text-gray-900">{{ $totalUsers }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -245,6 +136,9 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        <!-- Add Club Manager and Student Buttons -->
+                        {{-- Removed bottom Add Club Manager and Add Student buttons as requested --}}
                     </div>
                 </div>
             </div>

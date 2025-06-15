@@ -50,6 +50,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Master Admin only routes
     Route::middleware(['role:master_admin'])->group(function () {
         Route::get('/admin', [RoleTestController::class, 'adminDashboard'])->name('admin.dashboard');
+        // Assign club managers to a club (form and submit)
+        Route::get('/admin/clubs/{club}/assign-managers', [ClubController::class, 'showAssignManagersForm'])->name('admin.clubs.assign-managers');
+        Route::post('/admin/clubs/{club}/assign-managers', [ClubController::class, 'assignManagers']);
+        // Add club manager
+        Route::get('/admin/users/create-club-manager', [RoleTestController::class, 'showCreateClubManagerForm'])->name('admin.users.create-club-manager');
+        Route::post('/admin/users/create-club-manager', [RoleTestController::class, 'storeClubManager']);
+        // Add student
+        Route::get('/admin/users/create-student', [RoleTestController::class, 'showCreateStudentForm'])->name('admin.users.create-student');
+        Route::post('/admin/users/create-student', [RoleTestController::class, 'storeStudent']);
     });
     
     // Master Admin and Club Manager routes

@@ -27,6 +27,7 @@
                     <td class="px-6 py-4 whitespace-nowrap">{{ $club->name }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <a href="{{ route('clubs.edit', $club->id) }}" class="text-blue-600 hover:underline mr-2">Edit</a>
+                        <a href="{{ route('admin.clubs.assign-managers', $club->id) }}" class="text-green-600 hover:underline mr-2">Assign Managers</a>
                         <form action="{{ route('clubs.destroy', $club->id) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')

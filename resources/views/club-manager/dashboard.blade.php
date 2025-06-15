@@ -31,7 +31,16 @@
         <div class="px-4 py-6 sm:px-0">
             <div class="bg-white overflow-hidden shadow rounded-lg">
                 <div class="px-4 py-5 sm:p-6">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Club Manager Dashboard</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Your Clubs</h2>
+                    @if($clubs->isEmpty())
+                        <div class="text-gray-600">You are not assigned to any clubs yet.</div>
+                    @else
+                        <ul class="mb-6">
+                            @foreach($clubs as $club)
+                                <li class="mb-2 p-2 bg-gray-100 rounded">{{ $club->name }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
                     
                     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                         <div class="flex">
