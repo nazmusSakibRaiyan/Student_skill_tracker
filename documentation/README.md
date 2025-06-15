@@ -27,6 +27,7 @@ This is the main README for the Student Skill Tracker project. For detailed docu
 - See [`documentation/PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md) for project overview
 - See [`documentation/CLUB_MANAGER_ASSIGNMENT.md`](CLUB_MANAGER_ASSIGNMENT.md) for club manager assignment
 - See [`documentation/USER_CREATION.md`](USER_CREATION.md) for user creation
+- See [`documentation/PROFILE_PICTURE.md`](PROFILE_PICTURE.md) for profile picture feature
 
 ---
 For more, see the documentation folder.

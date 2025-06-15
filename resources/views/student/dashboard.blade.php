@@ -27,6 +27,22 @@
             </div>
         </div>
 
+        <!-- Student Profile Card -->
+        @if(auth()->user()->isStudent())
+        <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg mb-6">
+            <div class="p-6 flex items-center space-x-6">
+                <img src="{{ auth()->user()->profile_picture_url }}" alt="Profile Picture" class="w-20 h-20 rounded-full object-cover border">
+                <div>
+                    <div class="text-xl font-bold text-gray-900 dark:text-white">{{ auth()->user()->name }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">{{ auth()->user()->email }}</div>
+                    <div class="mt-1 inline-block px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                        {{ auth()->user()->role ? auth()->user()->role->display_name : 'Student' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <!-- Main Content -->
         <div class="px-4 py-6 sm:px-0">
             <div class="bg-white overflow-hidden shadow rounded-lg">

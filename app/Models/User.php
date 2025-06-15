@@ -24,6 +24,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role_id',
+        'profile_picture', // allow mass assignment
     ];
 
     /**
@@ -153,5 +154,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function clubs()
     {
         return $this->belongsToMany(Club::class, 'club_student', 'user_id', 'club_id')->withPivot('status')->withTimestamps();
+    }
+
+    /**
+     * Get the URL for the user's profile picture.
+     */
+    public function getProfilePictureUrlAttribute()
+    {
+        if ($this->profile_picture) {
+            return asset('storage/profile_pictures/' . $this->profile_picture);
+        }
+        // Default avatar
+        return asset('images/default-avatar.png');
     }
 }

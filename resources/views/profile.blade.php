@@ -41,6 +41,32 @@
                             </div>
                         @endif
                         
+                        <!-- Profile Picture Upload (Students only) -->
+                        @if($user->isStudent())
+                        <form method="POST" action="{{ route('profile.picture.update') }}" enctype="multipart/form-data" class="mb-6">
+                            @csrf
+                            <div class="flex items-center space-x-4">
+                                <div>
+                                    <img src="{{ $user->profile_picture_url }}" alt="Profile Picture" class="w-20 h-20 rounded-full object-cover border">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Change Profile Picture</label>
+                                    <input type="file" name="profile_picture" accept="image/jpeg,image/png,image/jpg" class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                                    <p class="mt-1 text-xs text-gray-500">JPG, JPEG, or PNG. Max 2MB.</p>
+                                    @error('profile_picture')
+                                        <span class="text-red-600 text-xs">{{ $message }}</span>
+                                    @enderror
+                                    @if(session('success'))
+                                        <span class="text-green-600 text-xs">{{ session('success') }}</span>
+                                    @endif
+                                </div>
+                                <div>
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none">Upload</button>
+                                </div>
+                            </div>
+                        </form>
+                        @endif
+                        
                         <!-- User Information -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>

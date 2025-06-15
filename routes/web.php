@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\RoleTestController;
 use App\Http\Controllers\ClubController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -79,6 +80,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         $user = auth()->user();
         return view('profile', compact('user'));
     })->name('profile');
+    
+    // Profile picture upload
+    Route::post('/profile/picture', [ProfileController::class, 'updatePicture'])->name('profile.picture.update');
     
     // Club Management - Only admin (master_admin) can create/edit/delete clubs
     Route::middleware(['role:master_admin'])->group(function () {
