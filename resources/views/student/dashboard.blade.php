@@ -77,20 +77,32 @@
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">My Clubs</h3>
                             <p class="text-gray-600 text-sm mb-4">Clubs you're participating in</p>
                             <div class="space-y-2">
-                                <div class="flex items-center p-2 bg-gray-50 rounded">
-                                    <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">C</div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-gray-900">Coding Club</p>
-                                        <p class="text-xs text-gray-500">Active member</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-center p-2 bg-gray-50 rounded">
-                                    <div class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white text-sm font-semibold">D</div>
-                                    <div class="ml-3">
-                                        <p class="text-sm font-medium text-gray-900">Design Club</p>
-                                        <p class="text-xs text-gray-500">Active member</p>
-                                    </div>
-                                </div>
+                                @php $clubs = auth()->user()->clubs; @endphp
+                                @if($clubs->isEmpty())
+                                    <div class="text-gray-500">You are not assigned to any clubs yet.</div>
+                                @else
+                                    @foreach($clubs as $club)
+                                        <a href="{{ route('student.club-details', $club->id) }}" class="block">
+                                            <div class="flex items-center p-2 bg-gray-50 rounded justify-between hover:bg-blue-100 transition">
+                                                <div class="flex items-center">
+                                                    @if($club->logo)
+                                                        <img src="{{ asset('storage/' . $club->logo) }}" alt="Club Logo" class="h-8 w-8 rounded mr-2">
+                                                    @else
+                                                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-semibold mr-2">
+                                                            {{ strtoupper(substr($club->name,0,1)) }}
+                                                        </div>
+                                                    @endif
+                                                    <p class="text-sm font-medium text-gray-900">{{ $club->name }}</p>
+                                                </div>
+                                                @if($club->pivot->status === 'pending')
+                                                    <span class="text-yellow-600 text-sm">Pending Approval</span>
+                                                @else
+                                                    <span class="text-green-600 text-sm">Approved</span>
+                                                @endif
+                                            </div>
+                                        </a>
+                                    @endforeach
+                                @endif
                             </div>
                         </div>
                         

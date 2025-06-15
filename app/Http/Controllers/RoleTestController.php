@@ -19,7 +19,7 @@ class RoleTestController extends Controller
      */
     public function clubManagerDashboard()
     {
-        $clubs = auth()->user()->managedClubs()->get();
+        $clubs = auth()->user()->managedClubs()->with('students')->get();
         return view('club-manager.dashboard', compact('clubs'));
     }
 

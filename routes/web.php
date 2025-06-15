@@ -89,4 +89,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/clubs/{id}', [ClubController::class, 'update'])->name('clubs.update');
         Route::delete('/clubs/{id}', [ClubController::class, 'destroy'])->name('clubs.destroy');
     });
+    
+    // Club Manager routes
+    Route::middleware(['role:club_manager'])->prefix('club-manager')->name('club-manager.')->group(function () {
+        Route::get('/clubs/{club}/edit', [\App\Http\Controllers\ClubManagerClubController::class, 'edit'])->name('club.edit');
+        Route::put('/clubs/{club}', [\App\Http\Controllers\ClubManagerClubController::class, 'update'])->name('club.update');
+        Route::get('/clubs/{club}/add-student', [\App\Http\Controllers\ClubManagerClubController::class, 'addStudentForm'])->name('club.add-student-form');
+        Route::post('/clubs/{club}/add-student', [\App\Http\Controllers\ClubManagerClubController::class, 'addStudent'])->name('club.add-student');
+        Route::get('/clubs/{club}/search-students', [\App\Http\Controllers\ClubManagerClubController::class, 'searchStudents'])->name('club.search-students');
+        Route::delete('/clubs/{club}/remove-student/{user}', [\App\Http\Controllers\ClubManagerClubController::class, 'removeStudent'])->name('club.remove-student');
+    });
+    
+    // Admin routes for approving/rejecting students
+    Route::middleware(['role:master_admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/pending-students', [\App\Http\Controllers\AdminClubStudentController::class, 'pending'])->name('clubs.pending-students');
+        Route::post('/clubs/{club}/approve-student/{user}', [\App\Http\Controllers\AdminClubStudentController::class, 'approve'])->name('clubs.approve-student');
+        Route::post('/clubs/{club}/reject-student/{user}', [\App\Http\Controllers\AdminClubStudentController::class, 'reject'])->name('clubs.reject-student');
+    });
+    
+    // Student routes
+    Route::middleware(['role:student'])->group(function () {
+        Route::get('/student/clubs/{club}', function($clubId) {
+            $club = \App\Models\Club::findOrFail($clubId);
+            // Optionally, check if the user is a member
+            if (!auth()->user()->clubs->contains($club->id)) {
+                abort(403);
+            }
+            return view('student.club_details', compact('club'));
+        })->name('student.club-details');
+    });
 });

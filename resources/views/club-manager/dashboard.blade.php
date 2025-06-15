@@ -37,7 +37,60 @@
                     @else
                         <ul class="mb-6">
                             @foreach($clubs as $club)
-                                <li class="mb-2 p-2 bg-gray-100 rounded">{{ $club->name }}</li>
+                                <li class="mb-2 p-2 bg-gray-100 rounded flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        @if($club->logo)
+                                            <img src="{{ asset('storage/' . $club->logo) }}" alt="Club Logo" class="h-8 w-8 rounded mr-2">
+                                        @else
+                                            <div class="h-8 w-8 bg-gray-300 rounded mr-2 flex items-center justify-center text-lg text-gray-500">
+                                                {{ strtoupper(substr($club->name,0,1)) }}
+                                            </div>
+                                        @endif
+                                        <span>{{ $club->name }}</span>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <a href="{{ route('club-manager.club.edit', $club->id) }}" class="text-blue-600 hover:underline ml-4">Edit</a>
+                                        <a href="{{ route('club-manager.club.add-student-form', $club->id) }}" class="text-green-600 hover:underline ml-2">Add Student</a>
+                                    </div>
+                                </li>
+                                <li class="mb-6">
+                                    <div class="bg-white p-6 border border-gray-200 rounded-lg mt-2">
+                                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Students</h3>
+                                        <p class="text-gray-600 text-sm mb-4">Pending and approved students in this club</p>
+                                        <table class="min-w-full bg-white border rounded mb-4">
+                                            <thead>
+                                                <tr>
+                                                    <th class="px-4 py-2">Name</th>
+                                                    <th class="px-4 py-2">Email</th>
+                                                    <th class="px-4 py-2">Status</th>
+                                                    <th class="px-4 py-2">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($club->students as $student)
+                                                    <tr>
+                                                        <td class="border px-4 py-2">{{ $student->name }}</td>
+                                                        <td class="border px-4 py-2">{{ $student->email }}</td>
+                                                        <td class="border px-4 py-2">
+                                                            @if($student->pivot->status === 'pending')
+                                                                <span class="text-yellow-600">Pending</span>
+                                                            @else
+                                                                <span class="text-green-600">Approved</span>
+                                                            @endif
+                                                        </td>
+                                                        <td class="border px-4 py-2">
+                                                            <form action="{{ route('club-manager.club.remove-student', [$club->id, $student->id]) }}" method="POST" onsubmit="return confirm('Remove this student from the club?');">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="text-red-600 hover:underline">Remove</button>
+                                                            </form>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </li>
                             @endforeach
                         </ul>
                     @endif
@@ -100,11 +153,11 @@
                                 </ul>
                             </div>
                         </div>
-                        
-                        <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <h4 class="text-sm font-medium text-yellow-800">Note:</h4>
-                            <p class="text-sm text-yellow-700 mt-1">Your access is limited to the club(s) you manage. Contact the admin for additional permissions or club assignments.</p>
-                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <h4 class="text-sm font-medium text-yellow-800">Note:</h4>
+                        <p class="text-sm text-yellow-700 mt-1">Your access is limited to the club(s) you manage. Contact the admin for additional permissions or club assignments.</p>
                     </div>
                 </div>
             </div>
