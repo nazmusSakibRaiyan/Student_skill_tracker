@@ -46,7 +46,11 @@
                                                 {{ strtoupper(substr($club->name,0,1)) }}
                                             </div>
                                         @endif
-                                        <span>{{ $club->name }}</span>
+                                        <span>
+                                            <a href="{{ route('club-manager.club.events.index', $club->id) }}" class="text-blue-700 hover:underline font-semibold">
+                                                {{ $club->name }}
+                                            </a>
+                                        </span>
                                     </div>
                                     <div class="flex items-center">
                                         <a href="{{ route('club-manager.club.edit', $club->id) }}" class="text-blue-600 hover:underline ml-4">Edit</a>

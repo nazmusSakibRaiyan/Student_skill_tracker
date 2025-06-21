@@ -4,9 +4,9 @@
 - **Admin (Master Admin):**
   - Full access to all features, user management, club management, and approvals.
 - **Club Manager:**
-  - Manages assigned clubs, updates club info, and manages club students.
+  - Manages assigned clubs, updates club info, manages club students, and manages club events.
 - **Student:**
-  - Participates in clubs, views club info, and tracks personal progress.
+  - Participates in clubs, views club info, tracks personal progress, and views club events.
 
 ## Authentication & Authorization
 - Email verification required for all users.
@@ -53,11 +53,27 @@
 - **Custom Email Verification:**
   - Users receive a custom email verification notification.
 
+## Club Event Management
+- **Create/Edit/Delete Events:** (Club Manager only)
+  - Club managers can create, update, and delete events for their assigned clubs.
+  - Event details include name, description, logo (JPEG), start/end date.
+  - Event logos are validated and stored securely.
+  - Modern, colorful, and interactive UI for event management (see `ClubManagerEvents.vue`).
+- **View Events:** (Approved Students only)
+  - Approved students can view all events for their clubs in real time.
+  - Events are displayed with logos, descriptions, and dates in a beautiful, readable UI (see `ClubEvents.vue`).
+  - Only students approved for a club can view its events.
+- **UI Improvements:**
+  - All event management and viewing pages feature white backgrounds, colorful buttons, improved spacing, and prominent event sections for easy access.
+
 ## Technical & Security Notes
 - **Logo Storage:**
   - Logos stored in `storage/app/public/club_logos`, served via `public/storage` symlink.
+- **Event Logo Storage:**
+  - Event logos stored in `storage/app/public/event_logos`, served via `public/storage` symlink.
 - **Validation:**
   - Logo uploads validated for type/size. Only registered students can be added to clubs.
+  - Event logo uploads validated for JPEG type/size. Only club managers can manage events for their assigned clubs. Only approved students can view events.
 - **Security:**
   - Club managers can only manage their assigned clubs. Students can only view their own clubs.
 

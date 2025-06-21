@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\RoleTestController;
 use App\Http\Controllers\ClubController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -102,6 +103,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/clubs/{club}/add-student', [\App\Http\Controllers\ClubManagerClubController::class, 'addStudent'])->name('club.add-student');
         Route::get('/clubs/{club}/search-students', [\App\Http\Controllers\ClubManagerClubController::class, 'searchStudents'])->name('club.search-students');
         Route::delete('/clubs/{club}/remove-student/{user}', [\App\Http\Controllers\ClubManagerClubController::class, 'removeStudent'])->name('club.remove-student');
+        
+        // Event management UI for club managers
+        Route::get('/clubs/{club}/events', function($clubId) {
+            $club = \App\Models\Club::findOrFail($clubId);
+            // Optionally, check if the user is a manager
+            if (!auth()->user()->managedClubs->contains($club->id)) {
+                abort(403);
+            }
+            return view('club-manager.events', compact('club'));
+        })->name('club.events.index');
+        Route::get('/clubs/{club}/events/api', [EventController::class, 'index']);
+        Route::post('/clubs/{club}/events', [EventController::class, 'store']);
+        Route::put('/clubs/{club}/events/{event}', [EventController::class, 'update']);
+        Route::delete('/clubs/{club}/events/{event}', [EventController::class, 'destroy']);
     });
     
     // Admin routes for approving/rejecting students
@@ -121,5 +136,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             }
             return view('student.club_details', compact('club'));
         })->name('student.club-details');
+        
+        // Event viewing for approved students
+        Route::get('/student/clubs/{club}/events', [\App\Http\Controllers\EventController::class, 'index'])->name('student.club.events.index');
     });
 });

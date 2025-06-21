@@ -11,6 +11,14 @@ This is the main README for the Student Skill Tracker project. For detailed docu
 
 ## Key Features
 
+### 🏆 Club Event Management (NEW)
+- Club managers can create, edit, and delete events for their assigned clubs.
+- Events include name, description, logo (JPEG), start/end date.
+- Event logos are validated and stored securely.
+- Students approved for a club can view all its events in real time.
+- Modern, colorful, and interactive UI for both managers and students (see `ClubManagerEvents.vue` and `ClubEvents.vue`).
+- Only JPEG files are accepted for event logos.
+
 ### 👤 Club Manager Management
 - Admins can assign one or more club managers to any club.
 - Club managers can be added via the admin UI or API.
@@ -28,6 +36,7 @@ This is the main README for the Student Skill Tracker project. For detailed docu
 - See [`documentation/CLUB_MANAGER_ASSIGNMENT.md`](CLUB_MANAGER_ASSIGNMENT.md) for club manager assignment
 - See [`documentation/USER_CREATION.md`](USER_CREATION.md) for user creation
 - See [`documentation/PROFILE_PICTURE.md`](PROFILE_PICTURE.md) for profile picture feature
+- See [`documentation/CLUB_MANAGEMENT_FEATURES.md`](CLUB_MANAGEMENT_FEATURES.md) for club and event management
 
 ---
 For more, see the documentation folder.

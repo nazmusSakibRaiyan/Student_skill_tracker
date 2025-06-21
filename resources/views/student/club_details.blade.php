@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="max-w-2xl mx-auto py-8">
-    <h2 class="text-2xl font-bold mb-4">Club Details</h2>
+<div class="max-w-2xl mx-auto py-8 bg-white rounded-xl shadow-xl">
+    <h2 class="text-2xl font-bold mb-4 text-pink-700">Club Details</h2>
     <div class="bg-white rounded shadow p-6">
         <div class="flex items-center mb-4">
             @if($club->logo)
@@ -20,7 +20,8 @@
             <h4 class="font-medium text-gray-800 mb-1">Description</h4>
             <p class="text-gray-700">{{ $club->description ?? 'No description provided.' }}</p>
         </div>
+        <div id="club-events" data-club-id="{{ $club->id }}"></div>
     </div>
-    <a href="{{ route('student.dashboard') }}" class="inline-block mt-6 text-blue-600 hover:underline">&larr; Back to My Clubs</a>
+    <a href="{{ route('student.dashboard') }}" class="inline-block mt-6 text-pink-600 hover:underline">&larr; Back to My Clubs</a>
 </div>
 @endsection
