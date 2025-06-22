@@ -16,6 +16,16 @@
             <input v-model="form.start_date" type="datetime-local" class="input flex-1" required />
             <input v-model="form.end_date" type="datetime-local" class="input flex-1" required />
           </div>
+          <select v-model="form.event_type" class="input" required>
+            <option value="" disabled>Select Event Type</option>
+            <option value="workshops">Workshops</option>
+            <option value="seminars">Seminars</option>
+            <option value="contests">Contests</option>
+            <option value="field_events">Field Events</option>
+            <option value="other">Other</option>
+          </select>
+          <input v-if="form.event_type === 'other'" v-model="form.event_type_description" type="text" class="input" placeholder="Describe the event type" />
+          <input v-model="form.venue_link" type="url" class="input" placeholder="Google Maps Link (optional)" />
           <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-green-400 via-lime-400 to-yellow-400 text-white rounded-full shadow hover:from-green-500 hover:to-yellow-500 transition-all duration-200">Create</button>
         </form>
       </div>
@@ -50,6 +60,24 @@
               </div>
             </div>
             <p class="text-gray-700 mb-4">{{ event.description }}</p>
+            <div class="mb-2">
+              <span class="font-semibold text-sm text-pink-700">Type:</span>
+              <span class="ml-1 text-gray-800">
+                <template v-if="event.event_type === 'other'">
+                  {{ event.event_type_description }}
+                </template>
+                <template v-else-if="event.event_type">
+                  {{ formatEventType(event.event_type) }}
+                </template>
+                <template v-else>
+                  N/A
+                </template>
+              </span>
+            </div>
+            <div v-if="event.venue_link" class="mb-2">
+              <span class="font-semibold text-sm text-pink-700">Venue:</span>
+              <a :href="event.venue_link" target="_blank" class="ml-1 text-blue-600 underline break-all">Google Maps</a>
+            </div>
             <div class="absolute top-4 right-4 flex gap-2">
               <button @click="editEvent(event)" class="px-3 py-1 bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-400 text-white rounded-full shadow hover:from-pink-500 hover:to-yellow-500 transition-all duration-200 text-xs font-semibold">Edit</button>
               <button @click="deleteEvent(event.id)" class="px-3 py-1 bg-gradient-to-r from-red-400 via-pink-500 to-orange-400 text-white rounded-full shadow hover:from-red-500 hover:to-orange-500 transition-all duration-200 text-xs font-semibold">Delete</button>
@@ -66,10 +94,21 @@
             <input v-model="editForm.name" type="text" placeholder="Event Name" class="input" required />
             <textarea v-model="editForm.description" placeholder="Description" class="input" required></textarea>
             <input v-model="editForm.logo" type="text" placeholder="Logo URL (optional)" class="input" />
+            <input @change="onEditLogoChange" type="file" accept="image/jpeg" class="input mb-2" />
             <div class="flex gap-2">
               <input v-model="editForm.start_date" type="datetime-local" class="input flex-1" required />
               <input v-model="editForm.end_date" type="datetime-local" class="input flex-1" required />
             </div>
+            <select v-model="editForm.event_type" class="input" required>
+              <option value="" disabled>Select Event Type</option>
+              <option value="workshops">Workshops</option>
+              <option value="seminars">Seminars</option>
+              <option value="contests">Contests</option>
+              <option value="field_events">Field Events</option>
+              <option value="other">Other</option>
+            </select>
+            <input v-if="editForm.event_type === 'other'" v-model="editForm.event_type_description" type="text" class="input" placeholder="Describe the event type" />
+            <input v-model="editForm.venue_link" type="url" class="input" placeholder="Google Maps Link (optional)" />
             <div class="flex gap-2 mt-2">
               <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 text-white rounded-full shadow hover:from-pink-600 hover:to-yellow-500 transition-all duration-200">Update</button>
               <button type="button" @click="showEdit = false" class="w-full px-4 py-2 bg-gray-200 rounded-full">Cancel</button>
@@ -96,10 +135,14 @@ export default {
         logo: '',
         start_date: '',
         end_date: '',
+        event_type: '',
+        event_type_description: '',
+        venue_link: '',
       },
       editForm: {},
       editId: null,
       logoFile: null,
+      editLogoFile: null,
     };
   },
   mounted() {
@@ -110,10 +153,14 @@ export default {
       this.loading = true;
       const response = await fetch(`/club-manager/clubs/${this.clubId}/events/api`);
       this.events = await response.json();
+      console.log('Fetched events:', this.events);
       this.loading = false;
     },
     onLogoChange(e) {
       this.logoFile = e.target.files[0];
+    },
+    onEditLogoChange(e) {
+      this.editLogoFile = e.target.files[0];
     },
     async createEvent() {
       const formData = new FormData();
@@ -124,6 +171,9 @@ export default {
       }
       formData.append('start_date', this.form.start_date);
       formData.append('end_date', this.form.end_date);
+      formData.append('event_type', this.form.event_type);
+      formData.append('event_type_description', this.form.event_type === 'other' ? this.form.event_type_description : '');
+      formData.append('venue_link', this.form.venue_link);
       const response = await fetch(`/club-manager/clubs/${this.clubId}/events`, {
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
@@ -132,7 +182,7 @@ export default {
       if (response.ok) {
         this.fetchEvents();
         this.showCreate = false;
-        this.form = { name: '', description: '', logo: '', start_date: '', end_date: '' };
+        this.form = { name: '', description: '', logo: '', start_date: '', end_date: '', event_type: '', event_type_description: '', venue_link: '' };
         this.logoFile = null;
       }
     },
@@ -140,18 +190,35 @@ export default {
       this.editForm = { ...event };
       this.editForm.start_date = event.start_date.slice(0, 16);
       this.editForm.end_date = event.end_date.slice(0, 16);
+      this.editForm.event_type = event.event_type || '';
+      this.editForm.event_type_description = event.event_type_description || '';
+      this.editForm.venue_link = event.venue_link || '';
       this.editId = event.id;
       this.showEdit = true;
     },
     async updateEvent() {
+      const formData = new FormData();
+      formData.append('name', this.editForm.name);
+      formData.append('description', this.editForm.description);
+      if (this.editLogoFile) {
+        formData.append('logo', this.editLogoFile);
+      } else if (this.editForm.logo) {
+        formData.append('logo', this.editForm.logo);
+      }
+      formData.append('start_date', this.editForm.start_date);
+      formData.append('end_date', this.editForm.end_date);
+      formData.append('event_type', this.editForm.event_type);
+      formData.append('event_type_description', this.editForm.event_type === 'other' ? this.editForm.event_type_description : '');
+      formData.append('venue_link', this.editForm.venue_link);
       const response = await fetch(`/club-manager/clubs/${this.clubId}/events/${this.editId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
-        body: JSON.stringify(this.editForm),
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content, 'X-HTTP-Method-Override': 'PUT' },
+        body: formData,
       });
       if (response.ok) {
         this.fetchEvents();
         this.showEdit = false;
+        this.editLogoFile = null;
       }
     },
     async deleteEvent(id) {
@@ -167,6 +234,10 @@ export default {
     formatDate(dateStr) {
       const d = new Date(dateStr);
       return d.toLocaleString();
+    },
+    formatEventType(type) {
+      if (!type) return 'N/A';
+      return type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
     },
   },
 };

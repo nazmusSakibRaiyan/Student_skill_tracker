@@ -6,7 +6,7 @@ This document provides an overview of the Student Skill Tracker application, its
 - Role-based access control (Admin, Club Manager, Student)
 - Comprehensive skill tracking and progress monitoring
 - Club management and student organization
-- Club event management (manager-only CRUD, student viewing, real-time UI, logo upload)
+- Club event management (manager-only CRUD, student viewing, real-time UI, logo upload, event type, venue link, and file upload for editing)
 - Email verification for secure onboarding
 
 ## Structure

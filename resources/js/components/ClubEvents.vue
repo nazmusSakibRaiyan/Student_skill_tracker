@@ -23,6 +23,24 @@
               </div>
             </div>
             <p class="text-gray-700 mb-2">{{ event.description }}</p>
+            <div class="mb-1">
+              <span class="font-semibold text-xs text-pink-700">Type:</span>
+              <span class="ml-1 text-gray-800">
+                <template v-if="event.event_type === 'other'">
+                  {{ event.event_type_description }}
+                </template>
+                <template v-else-if="event.event_type">
+                  {{ event.event_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()) }}
+                </template>
+                <template v-else>
+                  N/A
+                </template>
+              </span>
+            </div>
+            <div v-if="event.venue_link" class="mb-1">
+              <span class="font-semibold text-xs text-pink-700">Venue:</span>
+              <a :href="event.venue_link" target="_blank" class="ml-1 text-blue-600 underline break-all">Google Maps</a>
+            </div>
           </div>
         </div>
       </div>

@@ -45,6 +45,9 @@ class EventController extends Controller
             'logo' => 'nullable|file|mimes:jpeg,jpg|max:2048',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'event_type' => 'required|string|max:50',
+            'event_type_description' => 'nullable|string|max:255',
+            'venue_link' => 'nullable|url|max:255',
         ]);
         if ($request->hasFile('logo')) {
             $logoPath = $request->file('logo')->store('event_logos', 'public');
@@ -70,6 +73,9 @@ class EventController extends Controller
             'logo' => 'nullable|string',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
+            'event_type' => 'required|string|max:50',
+            'event_type_description' => 'nullable|string|max:255',
+            'venue_link' => 'nullable|url|max:255',
         ]);
         $event->update($data);
         return response()->json($event);

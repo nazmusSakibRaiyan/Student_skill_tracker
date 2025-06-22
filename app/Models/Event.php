@@ -16,6 +16,9 @@ class Event extends Model
         'logo',
         'start_date',
         'end_date',
+        'event_type',
+        'event_type_description',
+        'venue_link',
     ];
 
     public function club()
