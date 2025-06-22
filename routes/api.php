@@ -12,4 +12,6 @@ Route::middleware(['auth:sanctum', 'role:master_admin'])->group(function () {
     Route::post('/users/club-manager', [UserController::class, 'storeClubManager']);
     // Add a new student
     Route::post('/users/student', [UserController::class, 'storeStudent']);
+    // Ban a club manager (master admin only)
+    Route::post('/ban-club-manager', [ClubManagerController::class, 'banManager']);
 });

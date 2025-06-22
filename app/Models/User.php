@@ -145,7 +145,9 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function managedClubs(): BelongsToMany
     {
-        return $this->belongsToMany(Club::class, 'club_manager', 'user_id', 'club_id');
+        // Only return clubs where the manager is NOT banned
+        return $this->belongsToMany(Club::class, 'club_manager', 'user_id', 'club_id')
+            ->wherePivot('banned', false);
     }
 
     /**

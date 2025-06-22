@@ -40,6 +40,7 @@ This is the main README for the Student Skill Tracker project. For detailed docu
 - See [`documentation/USER_CREATION.md`](USER_CREATION.md) for user creation
 - See [`documentation/PROFILE_PICTURE.md`](PROFILE_PICTURE.md) for profile picture feature
 - See [`documentation/CLUB_MANAGEMENT_FEATURES.md`](CLUB_MANAGEMENT_FEATURES.md) for club and event management
+- See [`documentation/CLUB_MANAGER_BAN.md`](CLUB_MANAGER_BAN.md) for club manager ban/unban feature
 
 ---
 For more, see the documentation folder.

@@ -143,6 +143,81 @@
                             </div>
                         </div>
                         
+                        <!-- User List Table -->
+                        <div class="mb-8">
+                            <form method="GET" action="{{ route('admin.users.index') }}" class="mb-4 flex flex-wrap gap-2 items-center">
+                                <label for="role" class="font-semibold mr-2">Filter by Role:</label>
+                                <select name="role" id="role" class="border border-gray-300 rounded px-2 py-1" onchange="this.form.submit()">
+                                    <option value="">All</option>
+                                    <option value="club_manager" @if(request('role')=='club_manager') selected @endif>Club Manager</option>
+                                    <option value="student" @if(request('role')=='student') selected @endif>Student</option>
+                                </select>
+                            </form>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead>
+                                        <tr>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($users as $user)
+                                            <tr class="@if($loop->even) bg-gray-50 @endif">
+                                                <td class="px-4 py-2">{{ $user->name }}</td>
+                                                <td class="px-4 py-2">{{ $user->email }}</td>
+                                                <td class="px-4 py-2 capitalize">{{ $user->role ? $user->role->name : 'N/A' }}</td>
+                                                <td class="px-4 py-2">
+                                                    @if($user->role && $user->role->name == 'club_manager')
+                                                        @php
+                                                            $clubs = \App\Models\Club::whereHas('managers', function($q) use ($user) {
+                                                                $q->where('users.id', $user->id);
+                                                            })->get();
+                                                        @endphp
+                                                        <div class="flex flex-col gap-1">
+                                                            @foreach($clubs as $club)
+                                                                @php
+                                                                    $clubManager = \App\Models\ClubManager::where('user_id', $user->id)->where('club_id', $club->id)->first();
+                                                                @endphp
+                                                                <div class="flex items-center gap-2">
+                                                                    <span class="text-xs bg-gray-200 px-2 py-1 rounded">{{ $club->name }}</span>
+                                                                    @if($clubManager && $clubManager->banned)
+                                                                        <span class="px-2 py-1 bg-red-200 text-red-800 text-xs rounded">Banned</span>
+                                                                        <form method="POST" action="{{ route('admin.unban-club-manager') }}" class="inline-block ml-2" onsubmit="return confirm('Unban this manager from {{ $club->name }}?');">
+                                                                            @csrf
+                                                                            <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                                                            <input type="hidden" name="club_id" value="{{ $club->id }}">
+                                                                            <button type="submit" class="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 text-xs font-semibold">Unban</button>
+                                                                        </form>
+                                                                    @else
+                                                                        <form method="POST" action="{{ route('admin.ban-club-manager') }}" onsubmit="return confirm('Ban this manager from {{ $club->name }}?');">
+                                                                            @csrf
+                                                                            <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                                                            <input type="hidden" name="club_id" value="{{ $club->id }}">
+                                                                            <button type="submit" class="bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 text-xs font-semibold">Ban</button>
+                                                                        </form>
+                                                                    @endif
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
+                                                    @else
+                                                        <span class="px-2 py-1 bg-green-200 text-green-800 text-xs rounded">Active</span>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="4" class="px-4 py-2 text-center text-gray-500">No users found.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                                <div class="mt-4">{{ $users->withQueryString()->links() }}</div>
+                            </div>
+                        </div>
+
                         <!-- Add Club Manager and Student Buttons -->
                         {{-- Removed bottom Add Club Manager and Add Student buttons as requested --}}
                         

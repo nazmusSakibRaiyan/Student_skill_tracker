@@ -34,10 +34,18 @@ class RoleTestController extends Controller
     /**
      * Show user management - requires permission
      */
-    public function userManagement()
+    public function userManagement(Request $request)
     {
         $totalUsers = \App\Models\User::count();
-        return view('admin.users', compact('totalUsers'));
+        $role = $request->get('role');
+        $query = \App\Models\User::with('role');
+        if ($role) {
+            $query->whereHas('role', function($q) use ($role) {
+                $q->where('name', $role);
+            });
+        }
+        $users = $query->orderBy('name')->paginate(20);
+        return view('admin.users', compact('totalUsers', 'users', 'role'));
     }
 
     /**

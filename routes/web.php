@@ -61,6 +61,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Add student
         Route::get('/admin/users/create-student', [RoleTestController::class, 'showCreateStudentForm'])->name('admin.users.create-student');
         Route::post('/admin/users/create-student', [RoleTestController::class, 'storeStudent']);
+        // List all users (with filter)
+        Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+        // Ban club manager (web route)
+        Route::post('/admin/ban-club-manager', [\App\Http\Controllers\Admin\UserController::class, 'banClubManager'])->name('admin.ban-club-manager');
+        // Unban club manager (web route)
+        Route::post('/admin/unban-club-manager', [\App\Http\Controllers\Admin\UserController::class, 'unbanClubManager'])->name('admin.unban-club-manager');
     });
     
     // Master Admin and Club Manager routes

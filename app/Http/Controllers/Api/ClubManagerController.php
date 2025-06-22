@@ -23,4 +23,28 @@ class ClubManagerController extends Controller
         $club->managers()->sync($managerIds);
         return response()->json(['message' => 'Managers assigned successfully.']);
     }
+
+    /**
+     * Ban a club manager (master admin only)
+     */
+    public function banManager(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'club_id' => 'required|exists:clubs,id',
+        ]);
+
+        $clubManager = \App\Models\ClubManager::where('user_id', $request->user_id)
+            ->where('club_id', $request->club_id)
+            ->first();
+
+        if (!$clubManager) {
+            return response()->json(['message' => 'Club manager not found.'], 404);
+        }
+
+        $clubManager->banned = true;
+        $clubManager->save();
+
+        return response()->json(['message' => 'Club manager banned successfully.']);
+    }
 }
