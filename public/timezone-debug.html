@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Timezone Debug</title>
+</head>
+<body>
+    <h1>Timezone Debug Information</h1>
+    <script>
+        document.write('<p><strong>Your Browser Timezone:</strong> ' + Intl.DateTimeFormat().resolvedOptions().timeZone + '</p>');
+        document.write('<p><strong>Your Current Time:</strong> ' + new Date().toString() + '</p>');
+        document.write('<p><strong>UTC Time:</strong> ' + new Date().toUTCString() + '</p>');
+        document.write('<p><strong>Timezone Offset:</strong> ' + (new Date().getTimezoneOffset() / -60) + ' hours from UTC</p>');
+        
+        // Test datetime-local behavior
+        const testDate = new Date('2025-06-28T00:01:00'); // 12:01 AM
+        document.write('<p><strong>Test: 12:01 AM local becomes:</strong> ' + testDate.toISOString() + ' in UTC</p>');
+    </script>
+</body>
+</html>

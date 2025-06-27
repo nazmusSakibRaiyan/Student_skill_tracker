@@ -11,7 +11,15 @@ This is the main README for the Student Skill Tracker project. For detailed docu
 
 ## Key Features
 
-### 🏆 Club Event Management (NEW)
+### � Event Enrollment System (NEW)
+- Students can enroll in seminars, workshops, and contests
+- Automatic completion tracking when event deadlines pass
+- Real-time dashboard updates with enrollment statistics
+- Progress monitoring and activity history
+- Hourly auto-completion via scheduled tasks
+- See [`documentation/EVENT_ENROLLMENT_SYSTEM.md`](EVENT_ENROLLMENT_SYSTEM.md) for complete details
+
+### �🏆 Club Event Management
 - Club managers can create, edit, and delete events for their assigned clubs.
 - Events include name, description, logo (JPEG), start/end date, event type, event type description (if "other"), and venue/location (Google Maps link).
 - Event type options: workshops, seminars, contests, field events, or other (with custom description).
@@ -34,6 +42,7 @@ This is the main README for the Student Skill Tracker project. For detailed docu
 - See [`documentation/USER_CREATION.md`](USER_CREATION.md) for details.
 
 ## Documentation
+- See [`documentation/EVENT_ENROLLMENT_SYSTEM.md`](EVENT_ENROLLMENT_SYSTEM.md) for event enrollment and auto-completion
 - See [`documentation/EMAIL_VERIFICATION.md`](EMAIL_VERIFICATION.md) for email verification
 - See [`documentation/PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md) for project overview
 - See [`documentation/CLUB_MANAGER_ASSIGNMENT.md`](CLUB_MANAGER_ASSIGNMENT.md) for club manager assignment

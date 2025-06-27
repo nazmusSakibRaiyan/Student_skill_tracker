@@ -17,7 +17,7 @@
               <div v-else class="h-12 w-12 bg-pink-100 rounded mr-3 flex items-center justify-center text-xl text-pink-400">
                 {{ event.name.charAt(0).toUpperCase() }}
               </div>
-              <div>
+              <div class="flex-1">
                 <h3 class="text-lg font-semibold text-pink-700">{{ event.name }}</h3>
                 <div class="text-xs text-gray-400">{{ formatDate(event.start_date) }} - {{ formatDate(event.end_date) }}</div>
               </div>
@@ -37,9 +37,57 @@
                 </template>
               </span>
             </div>
-            <div v-if="event.venue_link" class="mb-1">
+            <div v-if="event.venue_link" class="mb-2">
               <span class="font-semibold text-xs text-pink-700">Venue:</span>
               <a :href="event.venue_link" target="_blank" class="ml-1 text-blue-600 underline break-all">Google Maps</a>
+            </div>
+            
+            <!-- Enrollment Information -->
+            <div v-if="event.can_enroll !== undefined" class="mt-3 pt-3 border-t border-gray-200">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs text-gray-500">
+                  {{ event.enrollment_count || 0 }} enrolled
+                </span>
+                <div v-if="event.user_enrollment" class="text-xs px-2 py-1 rounded-full"
+                     :class="{
+                       'bg-green-100 text-green-700': event.user_enrollment.status === 'completed',
+                       'bg-blue-100 text-blue-700': event.user_enrollment.status === 'enrolled',
+                       'bg-gray-100 text-gray-700': event.user_enrollment.status === 'cancelled'
+                     }">
+                  {{ event.user_enrollment.status.charAt(0).toUpperCase() + event.user_enrollment.status.slice(1) }}
+                </div>
+              </div>
+              
+              <!-- Enrollment Actions -->
+              <div v-if="event.can_enroll && !event.user_enrollment">
+                <button @click="enrollInEvent(event.id)" 
+                        :disabled="enrolling === event.id"
+                        class="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white px-3 py-2 rounded-full text-sm font-semibold hover:from-green-600 hover:to-blue-600 transition-all duration-200 disabled:opacity-50">
+                  {{ enrolling === event.id ? 'Enrolling...' : 'Enroll Now' }}
+                </button>
+              </div>
+              
+              <div v-else-if="event.user_enrollment && event.user_enrollment.status === 'enrolled'">
+                <button @click="cancelEnrollment(event.id)" 
+                        :disabled="cancelling === event.id"
+                        class="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-2 rounded-full text-sm font-semibold hover:from-red-600 hover:to-pink-600 transition-all duration-200 disabled:opacity-50">
+                  {{ cancelling === event.id ? 'Cancelling...' : 'Cancel Enrollment' }}
+                </button>
+              </div>
+              
+              <div v-else-if="!event.can_enroll && !event.user_enrollment">
+                <div class="text-xs text-gray-500 text-center">
+                  <span v-if="!['seminars', 'workshops', 'contests'].includes(event.event_type)">
+                    This event type doesn't allow enrollment
+                  </span>
+                  <span v-else-if="new Date(event.end_date) <= new Date()">
+                    Event has ended
+                  </span>
+                  <span v-else>
+                    Enrollment not available
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -56,6 +104,8 @@ export default {
       events: [],
       loading: true,
       showEvents: false,
+      enrolling: null,
+      cancelling: null,
     };
   },
   mounted() {
@@ -72,9 +122,69 @@ export default {
       }
       this.loading = false;
     },
+    async enrollInEvent(eventId) {
+      this.enrolling = eventId;
+      try {
+        const response = await fetch(`/events/${eventId}/enroll`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Refresh events to show updated enrollment status
+          await this.fetchEvents();
+          this.showSuccessMessage('Successfully enrolled in event!');
+        } else {
+          this.showErrorMessage(data.error || 'Failed to enroll in event');
+        }
+      } catch (error) {
+        this.showErrorMessage('Network error occurred');
+      } finally {
+        this.enrolling = null;
+      }
+    },
+    async cancelEnrollment(eventId) {
+      this.cancelling = eventId;
+      try {
+        const response = await fetch(`/events/${eventId}/cancel`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          // Refresh events to show updated enrollment status
+          await this.fetchEvents();
+          this.showSuccessMessage('Successfully cancelled enrollment!');
+        } else {
+          this.showErrorMessage(data.error || 'Failed to cancel enrollment');
+        }
+      } catch (error) {
+        this.showErrorMessage('Network error occurred');
+      } finally {
+        this.cancelling = null;
+      }
+    },
     formatDate(dateStr) {
       const d = new Date(dateStr);
       return d.toLocaleString();
+    },
+    showSuccessMessage(message) {
+      // Simple alert for now - could be replaced with a toast notification
+      alert(message);
+    },
+    showErrorMessage(message) {
+      // Simple alert for now - could be replaced with a toast notification
+      alert(message);
     },
   },
 };

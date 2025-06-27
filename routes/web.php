@@ -145,5 +145,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
         
         // Event viewing for approved students
         Route::get('/student/clubs/{club}/events', [\App\Http\Controllers\EventController::class, 'index'])->name('student.club.events.index');
+        
+        // Event enrollment routes
+        Route::post('/events/{event}/enroll', [\App\Http\Controllers\EventEnrollmentController::class, 'enroll'])->name('events.enroll');
+        Route::delete('/events/{event}/cancel', [\App\Http\Controllers\EventEnrollmentController::class, 'cancel'])->name('events.cancel');
+        Route::get('/my-enrollments', [\App\Http\Controllers\EventEnrollmentController::class, 'getUserEnrollments'])->name('student.enrollments');
+    });
+
+    // Club Manager routes for managing event enrollments
+    Route::middleware(['role:club_manager'])->group(function () {
+        Route::get('/events/{event}/enrollments', [\App\Http\Controllers\EventEnrollmentController::class, 'getEventEnrollments'])->name('events.enrollments');
+        Route::post('/events/{event}/enrollments/{user}/complete', [\App\Http\Controllers\EventEnrollmentController::class, 'markCompleted'])->name('events.mark-completed');
     });
 });

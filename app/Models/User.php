@@ -159,6 +159,36 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get event enrollments for the user.
+     */
+    public function eventEnrollments()
+    {
+        return $this->hasMany(EventEnrollment::class);
+    }
+
+    /**
+     * Get enrolled events for the user.
+     */
+    public function enrolledEvents()
+    {
+        return $this->belongsToMany(Event::class, 'event_enrollments')
+                    ->withPivot('status', 'enrolled_at', 'completed_at')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Get recent event activities (enrollments and completions).
+     */
+    public function getRecentEventActivities($limit = 5)
+    {
+        return $this->eventEnrollments()
+                    ->with('event.club')
+                    ->latest('created_at')
+                    ->limit($limit)
+                    ->get();
+    }
+
+    /**
      * Get the URL for the user's profile picture.
      */
     public function getProfilePictureUrlAttribute()

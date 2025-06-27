@@ -51,8 +51,15 @@
   - Click a club to view its logo and description.
 - **My Skills:**
   - Track and view skill development (static or dynamic, as implemented).
-- **Recent Activities, Achievements, Goals:**
-  - View recent learning activities, earned badges, and progress toward goals.
+- **Recent Activities:**
+  - View recent event enrollments and completions with real-time updates.
+  - Automatic activity tracking when events are completed.
+- **Statistics:**
+  - Total event enrollments and completed events count.
+  - Real-time statistics that update as events are completed.
+- **Event Enrollment:**
+  - Quick access to enrollment history and status.
+  - Dashboard reflects completed events automatically when deadlines pass.
 
 ## Notifications
 - **Admin Notification:**
@@ -70,8 +77,14 @@
   - Approved students can view all events for their clubs in real time.
   - Events are displayed with logos, descriptions, and dates in a beautiful, readable UI (see `ClubEvents.vue`).
   - Only students approved for a club can view its events.
+- **Event Enrollment System:**
+  - Students can enroll in seminars, workshops, and contests.
+  - Automatic completion when event deadlines pass.
+  - Real-time enrollment status tracking and dashboard integration.
+  - Club managers can view and manage event enrollments.
 - **UI Improvements:**
   - All event management and viewing pages feature white backgrounds, colorful buttons, improved spacing, and prominent event sections for easy access.
+  - Enrollment buttons and status indicators for enhanced user experience.
 
 ## Technical & Security Notes
 - **Logo Storage:**

@@ -22,3 +22,57 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Database files
+database/database.sqlite
+*.sqlite
+
+# Uploaded files and user content
+/public/storage
+/public/uploads
+/public/images/profile_pictures
+/public/images/event_logos
+/public/images/club_logos
+
+# Log files
+/storage/logs/*.log
+*.log
+
+# Cache and temporary files
+/bootstrap/cache/*.php
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/app/public/*
+
+# Environment and configuration
+.env.local
+.env.*.local
+.env.testing
+
+# IDE and editor files
+*.swp
+*.swo
+*~
+.vscode/settings.json
+.idea/
+*.sublime-*
+
+# OS generated files
+.DS_Store?
+ehthumbs.db
+Icon?
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Deployment and build artifacts
+/public/mix-manifest.json
+/public/js/app.js
+/public/css/app.css
+
+# Temporary files
+tmp/
+temp/

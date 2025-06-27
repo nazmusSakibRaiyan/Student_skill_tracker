@@ -63,6 +63,69 @@
                         </div>
                     </div>
                     
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                        <!-- Total Events Enrolled -->
+                        <div class="bg-white p-6 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="bg-blue-100 p-3 rounded-lg">
+                                    <svg class="h-6 w-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ $totalEnrollments }}</h3>
+                                    <p class="text-sm text-gray-600">Events Enrolled</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Completed Events -->
+                        <div class="bg-white p-6 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="bg-green-100 p-3 rounded-lg">
+                                    <svg class="h-6 w-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ $completedEvents }}</h3>
+                                    <p class="text-sm text-gray-600">Events Completed</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Enrollments -->
+                        <div class="bg-white p-6 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="bg-yellow-100 p-3 rounded-lg">
+                                    <svg class="h-6 w-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 2L3 7v11a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V7l-7-5z"/>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ $totalEnrollments - $completedEvents }}</h3>
+                                    <p class="text-sm text-gray-600">Active Enrollments</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Club Count -->
+                        <div class="bg-white p-6 border border-gray-200 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="bg-purple-100 p-3 rounded-lg">
+                                    <svg class="h-6 w-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM9 7a1 1 0 112 0 1 1 0 01-2 0zM2 18a6 6 0 1112 0H2z"/>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    @php $clubCount = auth()->user()->clubs->count(); @endphp
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ $clubCount }}</h3>
+                                    <p class="text-sm text-gray-600">Joined Clubs</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div class="bg-white p-6 border border-gray-200 rounded-lg">
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">My Skills</h3>
@@ -124,20 +187,50 @@
                         
                         <div class="bg-white p-6 border border-gray-200 rounded-lg">
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">Recent Activities</h3>
-                            <p class="text-gray-600 text-sm mb-4">Your latest learning activities</p>
+                            <p class="text-gray-600 text-sm mb-4">Your latest event enrollments and completions</p>
                             <div class="space-y-2">
-                                <div class="text-sm">
-                                    <p class="font-medium text-gray-900">Completed JavaScript Basics</p>
-                                    <p class="text-gray-500 text-xs">2 days ago</p>
-                                </div>
-                                <div class="text-sm">
-                                    <p class="font-medium text-gray-900">Attended Design Workshop</p>
-                                    <p class="text-gray-500 text-xs">1 week ago</p>
-                                </div>
-                                <div class="text-sm">
-                                    <p class="font-medium text-gray-900">Updated Profile Skills</p>
-                                    <p class="text-gray-500 text-xs">2 weeks ago</p>
-                                </div>
+                                @if($recentActivities && $recentActivities->count() > 0)
+                                    @foreach($recentActivities as $activity)
+                                        <div class="text-sm border-l-4 pl-3 py-2 
+                                            @if($activity->status === 'completed') border-green-500 bg-green-50
+                                            @elseif($activity->status === 'enrolled') border-blue-500 bg-blue-50
+                                            @else border-gray-500 bg-gray-50
+                                            @endif">
+                                            <p class="font-medium text-gray-900">
+                                                @if($activity->status === 'completed')
+                                                    ✅ Completed {{ $activity->event->name }}
+                                                @elseif($activity->status === 'enrolled')
+                                                    📝 Enrolled in {{ $activity->event->name }}
+                                                @else
+                                                    ❌ Cancelled {{ $activity->event->name }}
+                                                @endif
+                                            </p>
+                                            <p class="text-gray-500 text-xs">
+                                                {{ $activity->event->club->name }} • 
+                                                @if($activity->status === 'completed' && $activity->completed_at)
+                                                    Completed {{ $activity->completed_at->diffForHumans() }}
+                                                @else
+                                                    {{ $activity->enrolled_at->diffForHumans() }}
+                                                @endif
+                                            </p>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div class="text-sm text-gray-500 text-center py-4">
+                                        <div class="text-2xl mb-2">📚</div>
+                                        <p>No event activities yet.</p>
+                                        <p class="text-xs">Join a club and enroll in events to see your activities here!</p>
+                                    </div>
+                                @endif
+                                
+                                @if($totalEnrollments > 0)
+                                    <div class="mt-4 pt-4 border-t border-gray-200">
+                                        <div class="flex justify-between text-sm text-gray-600">
+                                            <span>Total Events Enrolled: <span class="font-semibold text-gray-900">{{ $totalEnrollments }}</span></span>
+                                            <span>Completed: <span class="font-semibold text-green-600">{{ $completedEvents }}</span></span>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
                         

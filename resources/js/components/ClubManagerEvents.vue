@@ -78,6 +78,16 @@
               <span class="font-semibold text-sm text-pink-700">Venue:</span>
               <a :href="event.venue_link" target="_blank" class="ml-1 text-blue-600 underline break-all">Google Maps</a>
             </div>
+            
+            <!-- Enrollment Info -->
+            <div v-if="['seminars', 'workshops', 'contests'].includes(event.event_type)" class="mb-3 p-2 bg-blue-50 rounded-lg border border-blue-100">
+              <div class="flex items-center justify-between text-sm">
+                <span class="font-semibold text-blue-700">📊 Enrollments:</span>
+                <button @click="viewEnrollments(event.id)" class="text-blue-600 hover:underline font-medium">
+                  {{ event.enrollment_count || 0 }} students enrolled
+                </button>
+              </div>
+            </div>
             <div class="absolute top-4 right-4 flex gap-2">
               <button @click="editEvent(event)" class="px-3 py-1 bg-gradient-to-r from-pink-400 via-orange-400 to-yellow-400 text-white rounded-full shadow hover:from-pink-500 hover:to-yellow-500 transition-all duration-200 text-xs font-semibold">Edit</button>
               <button @click="deleteEvent(event.id)" class="px-3 py-1 bg-gradient-to-r from-red-400 via-pink-500 to-orange-400 text-white rounded-full shadow hover:from-red-500 hover:to-orange-500 transition-all duration-200 text-xs font-semibold">Delete</button>
@@ -153,6 +163,24 @@ export default {
       this.loading = true;
       const response = await fetch(`/club-manager/clubs/${this.clubId}/events/api`);
       this.events = await response.json();
+      
+      // Add enrollment count for each event
+      for (let event of this.events) {
+        if (['seminars', 'workshops', 'contests'].includes(event.event_type)) {
+          try {
+            const enrollmentResponse = await fetch(`/events/${event.id}/enrollments`);
+            if (enrollmentResponse.ok) {
+              const enrollments = await enrollmentResponse.json();
+              event.enrollment_count = enrollments.length;
+            } else {
+              event.enrollment_count = 0;
+            }
+          } catch (e) {
+            event.enrollment_count = 0;
+          }
+        }
+      }
+      
       console.log('Fetched events:', this.events);
       this.loading = false;
     },
@@ -188,8 +216,15 @@ export default {
     },
     editEvent(event) {
       this.editForm = { ...event };
-      this.editForm.start_date = event.start_date.slice(0, 16);
-      this.editForm.end_date = event.end_date.slice(0, 16);
+      // Convert UTC dates to local datetime-local format
+      if (event.start_date) {
+        const startDate = new Date(event.start_date);
+        this.editForm.start_date = this.formatDateForInput(startDate);
+      }
+      if (event.end_date) {
+        const endDate = new Date(event.end_date);
+        this.editForm.end_date = this.formatDateForInput(endDate);
+      }
       this.editForm.event_type = event.event_type || '';
       this.editForm.event_type_description = event.event_type_description || '';
       this.editForm.venue_link = event.venue_link || '';
@@ -235,9 +270,22 @@ export default {
       const d = new Date(dateStr);
       return d.toLocaleString();
     },
+    formatDateForInput(date) {
+      // Format date for datetime-local input (YYYY-MM-DDTHH:MM)
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    },
     formatEventType(type) {
       if (!type) return 'N/A';
       return type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    },
+    viewEnrollments(eventId) {
+      // Simple alert for now - could be replaced with a modal
+      alert(`Viewing enrollments for event ID: ${eventId}. This feature will show enrolled students and allow marking as completed.`);
     },
   },
 };

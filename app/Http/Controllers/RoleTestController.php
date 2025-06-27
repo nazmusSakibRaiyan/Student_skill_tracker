@@ -28,7 +28,31 @@ class RoleTestController extends Controller
      */
     public function studentDashboard()
     {
-        return view('student.dashboard');
+        $user = auth()->user();
+        
+        // Get recent event activities for students
+        $recentActivities = [];
+        $totalEnrollments = 0;
+        $completedEvents = 0;
+        
+        if ($user->isStudent()) {
+            // Auto-complete any enrollments for events that have ended
+            $user->eventEnrollments()
+                 ->where('status', 'enrolled')
+                 ->whereHas('event', function($q) {
+                     $q->where('end_date', '<=', now());
+                 })
+                 ->get()
+                 ->each(function($enrollment) {
+                     $enrollment->markAsCompleted();
+                 });
+            
+            $recentActivities = $user->getRecentEventActivities(5);
+            $totalEnrollments = $user->eventEnrollments()->count();
+            $completedEvents = $user->eventEnrollments()->where('status', 'completed')->count();
+        }
+        
+        return view('student.dashboard', compact('recentActivities', 'totalEnrollments', 'completedEvents'));
     }
 
     /**
