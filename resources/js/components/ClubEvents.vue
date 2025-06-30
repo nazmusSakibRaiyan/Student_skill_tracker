@@ -46,7 +46,7 @@
             <div v-if="event.can_enroll !== undefined" class="mt-3 pt-3 border-t border-gray-200">
               <div class="flex items-center justify-between mb-2">
                 <span class="text-xs text-gray-500">
-                  {{ event.enrollment_count || 0 }} enrolled
+                  {{ event.enrollment_count || 0 }}{{ event.max_participants ? `/${event.max_participants}` : '' }} enrolled
                 </span>
                 <div v-if="event.user_enrollment" class="text-xs px-2 py-1 rounded-full"
                      :class="{
@@ -55,6 +55,18 @@
                        'bg-gray-100 text-gray-700': event.user_enrollment.status === 'cancelled'
                      }">
                   {{ event.user_enrollment.status.charAt(0).toUpperCase() + event.user_enrollment.status.slice(1) }}
+                </div>
+              </div>
+              
+              <!-- Slot Progress Bar -->
+              <div v-if="event.max_participants" class="mb-2">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div class="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full transition-all duration-300" 
+                       :style="`width: ${Math.min(100, ((event.enrollment_count || 0) / event.max_participants) * 100)}%`"></div>
+                </div>
+                <div class="text-xs text-gray-500 mt-1">
+                  <span v-if="event.is_full" class="text-red-600 font-semibold">🔴 Event is full</span>
+                  <span v-else-if="event.available_slots !== null" class="text-green-600">{{ event.available_slots }} slots remaining</span>
                 </div>
               </div>
               
@@ -82,6 +94,9 @@
                   </span>
                   <span v-else-if="new Date(event.end_date) <= new Date()">
                     Event has ended
+                  </span>
+                  <span v-else-if="event.is_full">
+                    Event is full - no slots available
                   </span>
                   <span v-else>
                     Enrollment not available

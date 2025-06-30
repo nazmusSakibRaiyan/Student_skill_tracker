@@ -8,6 +8,7 @@ This document provides an overview of the Student Skill Tracker application, its
 - Club management and student organization
 - Club event management (manager-only CRUD, student viewing, real-time UI, logo upload, event type, venue link, and file upload for editing)
 - **Event Enrollment System** with automatic completion tracking
+- **Participant Slot Management** with capacity limits and visual progress tracking
 - Real-time student dashboard with activity tracking
 - Automated skill development monitoring
 - Email verification for secure onboarding
@@ -15,6 +16,7 @@ This document provides an overview of the Student Skill Tracker application, its
 ## Key Capabilities
 - **Event Enrollment:** Students can enroll in seminars, workshops, and contests
 - **Auto-Completion:** Events automatically mark as completed when deadlines pass
+- **Slot Management:** Club managers can set participant limits with visual capacity tracking
 - **Progress Tracking:** Real-time dashboard updates and activity history
 - **Smart Scheduling:** Hourly auto-completion ensures accurate tracking
 

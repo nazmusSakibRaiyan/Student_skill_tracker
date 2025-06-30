@@ -3,10 +3,15 @@
 ## Event Enrollment System Setup
 
 ### 1. Database Migration
-Run the event enrollments migration:
+Run all migrations including the new participant slot management:
 ```bash
 php artisan migrate
 ```
+
+This includes:
+- Event enrollments table creation
+- Participant slot management (max_participants field)
+- All other system migrations
 
 ### 2. Task Scheduling (Production)
 For the auto-completion system to work in production, you need to set up the Laravel scheduler.
@@ -102,13 +107,17 @@ php artisan tinker
     'event_type' => 'workshops'
 ]);
 
-# Create enrollment
+# Create enrollment with capacity testing
 > App\Models\EventEnrollment::create([
     'event_id' => $event->id,
     'user_id' => 1, // Student user ID
     'status' => 'enrolled',
     'enrolled_at' => now()->subHours(1)
 ]);
+
+# Test capacity limits
+> echo "Available slots: " . ($event->getAvailableSlots() ?? 'unlimited');
+> echo "Is full: " . ($event->isFull() ? 'Yes' : 'No');
 
 # Test auto-completion
 > exit

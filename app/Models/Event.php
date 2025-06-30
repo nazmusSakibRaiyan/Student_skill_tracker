@@ -19,6 +19,7 @@ class Event extends Model
         'event_type',
         'event_type_description',
         'venue_link',
+        'max_participants',
     ];
 
     protected $casts = [
@@ -59,5 +60,31 @@ class Event extends Model
     public function getEnrollmentCount()
     {
         return $this->enrollments()->where('status', 'enrolled')->count();
+    }
+
+    // Check if event has available slots
+    public function hasAvailableSlots()
+    {
+        if (!$this->max_participants) {
+            return true; // No limit set
+        }
+        
+        return $this->getEnrollmentCount() < $this->max_participants;
+    }
+
+    // Get available slots count
+    public function getAvailableSlots()
+    {
+        if (!$this->max_participants) {
+            return null; // No limit set
+        }
+        
+        return max(0, $this->max_participants - $this->getEnrollmentCount());
+    }
+
+    // Check if enrollment is full
+    public function isFull()
+    {
+        return $this->max_participants && $this->getEnrollmentCount() >= $this->max_participants;
     }
 }

@@ -47,6 +47,11 @@ class EventEnrollmentController extends Controller
             return response()->json(['error' => 'Cannot enroll in past events'], 400);
         }
 
+        // Check if event has available slots
+        if (!$event->hasAvailableSlots()) {
+            return response()->json(['error' => 'This event is full. No more slots available.'], 400);
+        }
+
         // Create enrollment
         $enrollment = EventEnrollment::create([
             'event_id' => $event->id,

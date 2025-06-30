@@ -26,6 +26,11 @@
           </select>
           <input v-if="form.event_type === 'other'" v-model="form.event_type_description" type="text" class="input" placeholder="Describe the event type" />
           <input v-model="form.venue_link" type="url" class="input" placeholder="Google Maps Link (optional)" />
+          <div v-if="['seminars', 'workshops', 'contests'].includes(form.event_type)" class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+            <label class="block text-sm font-semibold text-blue-700 mb-2">Participant Limit (optional)</label>
+            <input v-model.number="form.max_participants" type="number" min="1" class="input" placeholder="Maximum participants (leave empty for unlimited)" />
+            <p class="text-xs text-blue-600 mt-1">💡 Set a limit for enrollment capacity. Leave empty for unlimited participants.</p>
+          </div>
           <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-green-400 via-lime-400 to-yellow-400 text-white rounded-full shadow hover:from-green-500 hover:to-yellow-500 transition-all duration-200">Create</button>
         </form>
       </div>
@@ -81,11 +86,18 @@
             
             <!-- Enrollment Info -->
             <div v-if="['seminars', 'workshops', 'contests'].includes(event.event_type)" class="mb-3 p-2 bg-blue-50 rounded-lg border border-blue-100">
-              <div class="flex items-center justify-between text-sm">
+              <div class="flex items-center justify-between text-sm mb-1">
                 <span class="font-semibold text-blue-700">📊 Enrollments:</span>
                 <button @click="viewEnrollments(event.id)" class="text-blue-600 hover:underline font-medium">
-                  {{ event.enrollment_count || 0 }} students enrolled
+                  {{ event.enrollment_count || 0 }}{{ event.max_participants ? `/${event.max_participants}` : '' }} students
                 </button>
+              </div>
+              <div v-if="event.max_participants" class="w-full bg-gray-200 rounded-full h-2">
+                <div class="bg-blue-500 h-2 rounded-full transition-all duration-300" :style="`width: ${Math.min(100, ((event.enrollment_count || 0) / event.max_participants) * 100)}%`"></div>
+              </div>
+              <div v-if="event.max_participants" class="text-xs text-gray-600 mt-1">
+                <span v-if="event.enrollment_count >= event.max_participants" class="text-red-600 font-semibold">🔴 Event is full</span>
+                <span v-else class="text-green-600">{{ event.max_participants - (event.enrollment_count || 0) }} slots remaining</span>
               </div>
             </div>
             <div class="absolute top-4 right-4 flex gap-2">
@@ -119,6 +131,11 @@
             </select>
             <input v-if="editForm.event_type === 'other'" v-model="editForm.event_type_description" type="text" class="input" placeholder="Describe the event type" />
             <input v-model="editForm.venue_link" type="url" class="input" placeholder="Google Maps Link (optional)" />
+            <div v-if="['seminars', 'workshops', 'contests'].includes(editForm.event_type)" class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+              <label class="block text-sm font-semibold text-blue-700 mb-2">Participant Limit (optional)</label>
+              <input v-model.number="editForm.max_participants" type="number" min="1" class="input" placeholder="Maximum participants (leave empty for unlimited)" />
+              <p class="text-xs text-blue-600 mt-1">💡 Set a limit for enrollment capacity. Leave empty for unlimited participants.</p>
+            </div>
             <div class="flex gap-2 mt-2">
               <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 text-white rounded-full shadow hover:from-pink-600 hover:to-yellow-500 transition-all duration-200">Update</button>
               <button type="button" @click="showEdit = false" class="w-full px-4 py-2 bg-gray-200 rounded-full">Cancel</button>
@@ -148,6 +165,7 @@ export default {
         event_type: '',
         event_type_description: '',
         venue_link: '',
+        max_participants: null,
       },
       editForm: {},
       editId: null,
@@ -202,6 +220,9 @@ export default {
       formData.append('event_type', this.form.event_type);
       formData.append('event_type_description', this.form.event_type === 'other' ? this.form.event_type_description : '');
       formData.append('venue_link', this.form.venue_link);
+      if (this.form.max_participants) {
+        formData.append('max_participants', this.form.max_participants);
+      }
       const response = await fetch(`/club-manager/clubs/${this.clubId}/events`, {
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
@@ -210,7 +231,7 @@ export default {
       if (response.ok) {
         this.fetchEvents();
         this.showCreate = false;
-        this.form = { name: '', description: '', logo: '', start_date: '', end_date: '', event_type: '', event_type_description: '', venue_link: '' };
+        this.form = { name: '', description: '', logo: '', start_date: '', end_date: '', event_type: '', event_type_description: '', venue_link: '', max_participants: null };
         this.logoFile = null;
       }
     },
@@ -228,6 +249,7 @@ export default {
       this.editForm.event_type = event.event_type || '';
       this.editForm.event_type_description = event.event_type_description || '';
       this.editForm.venue_link = event.venue_link || '';
+      this.editForm.max_participants = event.max_participants || null;
       this.editId = event.id;
       this.showEdit = true;
     },
@@ -245,6 +267,9 @@ export default {
       formData.append('event_type', this.editForm.event_type);
       formData.append('event_type_description', this.editForm.event_type === 'other' ? this.editForm.event_type_description : '');
       formData.append('venue_link', this.editForm.venue_link);
+      if (this.editForm.max_participants) {
+        formData.append('max_participants', this.editForm.max_participants);
+      }
       const response = await fetch(`/club-manager/clubs/${this.clubId}/events/${this.editId}`, {
         method: 'POST',
         headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content, 'X-HTTP-Method-Override': 'PUT' },

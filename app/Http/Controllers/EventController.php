@@ -43,8 +43,11 @@ class EventController extends Controller
                 }
                 
                 $event->user_enrollment = $enrollment;
-                $event->can_enroll = $event->allowsEnrollment() && !$enrollment && $event->end_date > now();
+                $event->can_enroll = $event->allowsEnrollment() && !$enrollment && $event->end_date > now() && $event->hasAvailableSlots();
                 $event->enrollment_count = $event->getEnrollmentCount();
+                $event->max_participants = $event->max_participants;
+                $event->available_slots = $event->getAvailableSlots();
+                $event->is_full = $event->isFull();
             });
         }
         
@@ -68,6 +71,7 @@ class EventController extends Controller
             'event_type' => 'required|string|max:50',
             'event_type_description' => 'nullable|string|max:255',
             'venue_link' => 'nullable|url|max:255',
+            'max_participants' => 'nullable|integer|min:1',
         ]);
         
         if ($request->hasFile('logo')) {
@@ -98,6 +102,7 @@ class EventController extends Controller
             'event_type' => 'required|string|max:50',
             'event_type_description' => 'nullable|string|max:255',
             'venue_link' => 'nullable|url|max:255',
+            'max_participants' => 'nullable|integer|min:1',
         ]);
         $event->update($data);
         return response()->json($event);

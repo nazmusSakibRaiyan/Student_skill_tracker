@@ -1,4 +1,11 @@
-# Student Skill Tracker — README
+# Student Ski### 🎯 Event Enrollment System (NEW)
+- Students can enroll in seminars, workshops, and contests
+- Automatic completion tracking when event deadlines pass
+- **Participant slot management** with capacity limits and visual progress bars
+- Real-time dashboard updates with enrollment statistics
+- Progress monitoring and activity history
+- Hourly auto-completion via scheduled tasks
+- See [`documentation/EVENT_ENROLLMENT_SYSTEM.md`](EVENT_ENROLLMENT_SYSTEM.md) for complete detailsker — README
 
 This is the main README for the Student Skill Tracker project. For detailed documentation on specific features, see the `documentation/` folder.
 
@@ -43,6 +50,7 @@ This is the main README for the Student Skill Tracker project. For detailed docu
 
 ## Documentation
 - See [`documentation/EVENT_ENROLLMENT_SYSTEM.md`](EVENT_ENROLLMENT_SYSTEM.md) for event enrollment and auto-completion
+- See [`documentation/PARTICIPANT_SLOT_MANAGEMENT.md`](PARTICIPANT_SLOT_MANAGEMENT.md) for capacity management and slot limits
 - See [`documentation/EMAIL_VERIFICATION.md`](EMAIL_VERIFICATION.md) for email verification
 - See [`documentation/PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md) for project overview
 - See [`documentation/CLUB_MANAGER_ASSIGNMENT.md`](CLUB_MANAGER_ASSIGNMENT.md) for club manager assignment

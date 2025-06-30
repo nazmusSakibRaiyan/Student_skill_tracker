@@ -12,6 +12,13 @@ The Event Enrollment System allows students to enroll in specific types of event
   - User must be an approved member of the club hosting the event
   - Event must not have ended
   - User cannot already be enrolled in the event
+  - Event must have available slots (if participant limit is set)
+
+### 2. Participant Slot Management
+- **Slot Limits:** Club managers can set maximum participant limits for enrollable events
+- **Availability Checks:** System prevents enrollment when events are full
+- **Progress Tracking:** Visual progress bars show enrollment capacity
+- **Flexible Limits:** Limits are optional - events can have unlimited participants
 
 ### 2. Auto-Completion System
 - **Automatic Completion:** Enrollments are automatically marked as "completed" when the event's end_date passes
@@ -33,7 +40,22 @@ The Event Enrollment System allows students to enroll in specific types of event
 
 ## Database Schema
 
-### event_enrollments Table
+### events Table (Updated)
+```sql
+- id (primary key)
+- club_id (foreign key to clubs table)
+- name (varchar)
+- description (text)
+- logo (varchar, nullable)
+- start_date (timestamp)
+- end_date (timestamp)
+- event_type (varchar)
+- event_type_description (varchar, nullable)
+- venue_link (varchar, nullable)
+- max_participants (integer, nullable) -- NEW: Participant limit
+- created_at (timestamp)
+- updated_at (timestamp)
+```
 ```sql
 - id (primary key)
 - event_id (foreign key to events table)
@@ -85,14 +107,18 @@ php artisan events:auto-complete
 ## Frontend Components
 
 ### ClubEvents.vue
-- **Enrollment Button:** Shows "Enroll" for eligible events
+- **Enrollment Button:** Shows "Enroll" for eligible events with available slots
 - **Status Display:** Shows enrollment status with appropriate styling
 - **Cancel Option:** Allows cancellation before event ends
+- **Slot Information:** Displays current enrollment count and available slots
+- **Progress Bar:** Visual representation of enrollment capacity
 - **Real-time Updates:** Reflects status changes immediately
 
 ### ClubManagerEvents.vue
-- **Enrollment Count:** Displays number of enrolled students
-- **Status Indicators:** Shows event status and enrollment information
+- **Participant Limit Setting:** Optional field for setting maximum participants
+- **Enrollment Management:** Visual progress bars and slot information
+- **Capacity Overview:** Shows enrolled/total participants at a glance
+- **Status Indicators:** Clear indication when events are full
 - **Management Interface:** Access to view and manage enrollments
 
 ### Student Dashboard
@@ -108,6 +134,14 @@ php artisan events:auto-complete
 3. Cannot enroll in past events
 4. Cannot enroll twice in the same event
 5. Cannot cancel completed events
+6. Cannot enroll in full events (when participant limit is reached)
+
+### Slot Management Rules
+1. Participant limits are optional for all events
+2. When set, limits apply only to active enrollments (status = 'enrolled')
+3. Cancelled enrollments don't count toward the limit
+4. Completed enrollments count toward the limit (skill tracking)
+5. Club managers can set, modify, or remove limits at any time
 
 ### Auto-Completion Rules
 1. Enrollments auto-complete when `event.end_date <= now()`

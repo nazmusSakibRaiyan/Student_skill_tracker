@@ -82,9 +82,15 @@
   - Automatic completion when event deadlines pass.
   - Real-time enrollment status tracking and dashboard integration.
   - Club managers can view and manage event enrollments.
+- **Participant Slot Management:**
+  - Club managers can set maximum participant limits for enrollable events.
+  - Visual progress bars show enrollment capacity and remaining slots.
+  - Automatic prevention of over-enrollment when events are full.
+  - Flexible limits - optional setting with unlimited participants by default.
 - **UI Improvements:**
   - All event management and viewing pages feature white backgrounds, colorful buttons, improved spacing, and prominent event sections for easy access.
   - Enrollment buttons and status indicators for enhanced user experience.
+  - Capacity management with visual progress tracking and slot availability.
 
 ## Technical & Security Notes
 - **Logo Storage:**
