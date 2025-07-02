@@ -52,6 +52,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Master Admin only routes
     Route::middleware(['role:master_admin'])->group(function () {
         Route::get('/admin', [RoleTestController::class, 'adminDashboard'])->name('admin.dashboard');
+        // Reports & Analytics
+        Route::get('/admin/reports', [\App\Http\Controllers\Admin\ReportsController::class, 'index'])->name('admin.reports');
+        // System Logs & Activity
+        Route::get('/admin/system-logs', [\App\Http\Controllers\Admin\SystemLogsController::class, 'index'])->name('admin.system-logs');
+        Route::get('/admin/system-logs/download', [\App\Http\Controllers\Admin\SystemLogsController::class, 'downloadLog'])->name('admin.system-logs.download');
+        Route::post('/admin/system-logs/clear', [\App\Http\Controllers\Admin\SystemLogsController::class, 'clearLog'])->name('admin.system-logs.clear');
         // Assign club managers to a club (form and submit)
         Route::get('/admin/clubs/{club}/assign-managers', [ClubController::class, 'showAssignManagersForm'])->name('admin.clubs.assign-managers');
         Route::post('/admin/clubs/{club}/assign-managers', [ClubController::class, 'assignManagers']);

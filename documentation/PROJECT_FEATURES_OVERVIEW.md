@@ -44,6 +44,15 @@
 - **Bulk Import Users:** (Admin)
 - **Assign/Manage Roles:** (Admin)
 - **View User Reports & Statistics:** (Admin)
+- **System Logs & Activity Monitoring:** (Master Admin only)
+  - Comprehensive system monitoring dashboard with real-time metrics
+  - Log file management (view, download, clear) with security controls
+  - System activity filtering by log levels (Error, Warning, Info, Debug)
+  - Database activity statistics and user analytics
+  - User activity logging middleware for audit trails
+  - System health monitoring (disk usage, memory usage, performance metrics)
+  - Time-based filtering and search functionality across logs
+  - Access via Reports → System Monitoring section
 
 ## Student Dashboard
 - **My Clubs:**
