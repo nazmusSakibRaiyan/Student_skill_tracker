@@ -10,8 +10,25 @@
                 {{ session('success') }}
             </div>
         @endif
-        <form method="POST" action="{{ route('admin.clubs.assign-managers', $club->id) }}">
+        @if(session('error'))
+            <div class="mb-4 p-3 bg-red-100 text-red-800 rounded border border-red-200">
+                {{ session('error') }}
+            </div>
+        @endif
+        @if($errors->any())
+            <div class="mb-4 p-3 bg-red-100 text-red-800 rounded border border-red-200">
+                <ul class="list-disc list-inside">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+        <form method="POST" action="{{ route('admin.clubs.assign-managers', $club->id) }}" id="assignManagersForm">
             @csrf
+            <!-- Hidden field to ensure manager_ids is always sent, even if empty -->
+            <input type="hidden" name="manager_ids" value="">
+            <input type="hidden" name="form_submitted" value="1">
             <div class="mb-6">
                 <label class="block font-semibold mb-2">Available Club Managers:</label>
                 <div class="grid grid-cols-1 gap-3">
@@ -31,12 +48,10 @@
                                     @endif
                                 </span>
                             </div>
-                            <form method="POST" action="{{ url('/api/ban-club-manager') }}" onsubmit="return confirm('Are you sure you want to ban this manager?');">
-                                @csrf
-                                <input type="hidden" name="user_id" value="{{ $manager->id }}">
-                                <input type="hidden" name="club_id" value="{{ $club->id }}">
-                                <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs font-semibold">Ban</button>
-                            </form>
+                            <div>
+                                <!-- Ban button without nested form - use JavaScript instead -->
+                                <button type="button" onclick="banManager({{ $manager->id }}, {{ $club->id }})" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-xs font-semibold">Ban</button>
+                            </div>
                         </div>
                     @empty
                         <div class="text-gray-500">No club managers available.</div>
@@ -47,4 +62,70 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Page loaded, setting up form listeners...');
+    
+    const form = document.getElementById('assignManagersForm');
+    if (form) {
+        console.log('Found form:', form.action);
+        
+        form.addEventListener('submit', function(e) {
+            console.log('Form submission triggered!');
+            
+            const checkboxes = document.querySelectorAll('input[name="manager_ids[]"]:checked');
+            console.log('Selected managers:', Array.from(checkboxes).map(cb => cb.value));
+            
+            // Let the form submit normally
+            console.log('Allowing form to submit...');
+        });
+    } else {
+        console.error('Form not found!');
+    }
+    
+    // Also add a click listener to the submit button for extra debugging
+    const submitButton = document.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.addEventListener('click', function(e) {
+            console.log('Submit button clicked!');
+        });
+    }
+});
+
+// Function to handle ban manager (moved outside the form)
+function banManager(userId, clubId) {
+    if (confirm('Are you sure you want to ban this manager?')) {
+        // Create a temporary form for the ban action
+        const banForm = document.createElement('form');
+        banForm.method = 'POST';
+        banForm.action = '{{ url("/api/ban-club-manager") }}';
+        
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = '_token';
+        csrfInput.value = '{{ csrf_token() }}';
+        banForm.appendChild(csrfInput);
+        
+        // Add user ID
+        const userInput = document.createElement('input');
+        userInput.type = 'hidden';
+        userInput.name = 'user_id';
+        userInput.value = userId;
+        banForm.appendChild(userInput);
+        
+        // Add club ID
+        const clubInput = document.createElement('input');
+        clubInput.type = 'hidden';
+        clubInput.name = 'club_id';
+        clubInput.value = clubId;
+        banForm.appendChild(clubInput);
+        
+        // Submit the form
+        document.body.appendChild(banForm);
+        banForm.submit();
+    }
+}
+</script>
 @endsection

@@ -42,8 +42,18 @@
 ## User Management
 - **Create Club Manager/Student:** (Admin)
 - **Bulk Import Users:** (Admin)
-- **Assign/Manage Roles:** (Admin)
-- **View User Reports & Statistics:** (Admin)
+- **Enhanced Role Management:** (Master Admin only)
+  - Dedicated role management interface accessible via "Manage Roles" from Users page
+  - Comprehensive user filtering by role (Students, Club Managers, All)
+  - User status tracking with visual indicators (Active, Banned, No Club Assignment)
+  - Delete user functionality with confirmation and audit logging
+  - Statistics dashboard showing user counts and banned manager metrics
+  - Real-time status updates and responsive design
+- **Club Manager Ban/Unban System:** (Master Admin only)
+  - Ban and unban club managers with single-click actions
+  - Automatic status tracking and visual indicators
+  - Handles club managers with and without club assignments
+  - Confirmation dialogs for all destructive actions
 - **System Logs & Activity Monitoring:** (Master Admin only)
   - Comprehensive system monitoring dashboard with real-time metrics
   - Log file management (view, download, clear) with security controls

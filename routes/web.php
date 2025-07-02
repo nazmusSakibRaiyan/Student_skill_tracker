@@ -69,6 +69,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/users/create-student', [RoleTestController::class, 'storeStudent']);
         // List all users (with filter)
         Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+        // Role management
+        Route::get('/admin/manage-roles', [\App\Http\Controllers\Admin\UserController::class, 'manageRoles'])->name('admin.manage-roles');
+        Route::delete('/admin/users/{user_id}', [\App\Http\Controllers\Admin\UserController::class, 'deleteUser'])->name('admin.users.delete');
         // Ban club manager (web route)
         Route::post('/admin/ban-club-manager', [\App\Http\Controllers\Admin\UserController::class, 'banClubManager'])->name('admin.ban-club-manager');
         // Unban club manager (web route)

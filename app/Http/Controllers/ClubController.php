@@ -56,21 +56,65 @@ class ClubController extends Controller
 
     public function showAssignManagersForm($id)
     {
-        $club = \App\Models\Club::findOrFail($id);
-        $managers = \App\Models\User::whereHas('role', function($q) { $q->where('name', 'club_manager'); })->get();
+        $club = \App\Models\Club::with('managers')->findOrFail($id);
+        $managers = \App\Models\User::whereHas('role', function($q) { 
+            $q->where('name', 'club_manager'); 
+        })->get();
         $assigned = $club->managers->pluck('id')->toArray();
+        
+        // Debug logging
+        \Log::info('Assign Managers Form', [
+            'club_id' => $club->id,
+            'club_name' => $club->name,
+            'total_managers' => $managers->count(),
+            'assigned_managers' => $assigned
+        ]);
+        
         return view('admin.assign_managers', compact('club', 'managers', 'assigned'));
     }
 
     public function assignManagers(Request $request, $id)
     {
-        $club = \App\Models\Club::findOrFail($id);
-        $request->validate([
-            'manager_ids' => 'array',
-            'manager_ids.*' => 'exists:users,id',
-        ]);
-        $managerIds = \App\Models\User::whereIn('id', $request->manager_ids ?? [])->whereHas('role', function($q) { $q->where('name', 'club_manager'); })->pluck('id');
-        $club->managers()->sync($managerIds);
-        return redirect()->route('admin.clubs.assign-managers', $club->id)->with('success', 'Managers assigned successfully.');
+        try {
+            $club = \App\Models\Club::findOrFail($id);
+            
+            $request->validate([
+                'manager_ids' => 'nullable|array',
+                'manager_ids.*' => 'exists:users,id',
+            ]);
+
+            // Get the submitted manager IDs (default to empty array if none selected)
+            $submittedManagerIds = $request->manager_ids ?? [];
+            
+            // Validate that submitted IDs are actually club managers
+            $validManagerIds = \App\Models\User::whereIn('id', $submittedManagerIds)
+                ->whereHas('role', function($q) { 
+                    $q->where('name', 'club_manager'); 
+                })->pluck('id')->toArray();
+
+            // Log for debugging
+            \Log::info('Club Manager Assignment', [
+                'club_id' => $club->id,
+                'submitted_ids' => $submittedManagerIds,
+                'valid_ids' => $validManagerIds,
+                'admin' => auth()->user()->email
+            ]);
+
+            // Sync the managers (this will add new ones and remove unchecked ones)
+            $club->managers()->sync($validManagerIds);
+
+            return redirect()->route('admin.clubs.assign-managers', $club->id)
+                ->with('success', 'Managers assigned successfully.');
+                
+        } catch (\Exception $e) {
+            \Log::error('Error assigning club managers', [
+                'club_id' => $id,
+                'error' => $e->getMessage(),
+                'admin' => auth()->user()->email
+            ]);
+            
+            return redirect()->back()
+                ->with('error', 'Failed to assign managers: ' . $e->getMessage());
+        }
     }
 }

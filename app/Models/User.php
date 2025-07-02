@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -198,5 +199,13 @@ class User extends Authenticatable implements MustVerifyEmail
         }
         // Default avatar
         return asset('images/default-avatar.png');
+    }
+
+    /**
+     * Get the club manager records for this user
+     */
+    public function clubManagers(): HasMany
+    {
+        return $this->hasMany(ClubManager::class, 'user_id');
     }
 }

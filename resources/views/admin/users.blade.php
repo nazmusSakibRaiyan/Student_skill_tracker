@@ -82,15 +82,7 @@
                                         <div class="p-4 border border-gray-200 rounded-lg">
                                             <h4 class="font-medium text-gray-900 mb-2">Role Assignment</h4>
                                             <p class="text-sm text-gray-600 mb-3">Assign and manage user roles</p>
-                                            <a href="#pending-approvals" class="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 text-sm block text-center">Manage Roles</a>
-                                        </div>
-                                        
-                                        <div class="p-4 border border-gray-200 rounded-lg">
-                                            <h4 class="font-medium text-gray-900 mb-2">User Reports</h4>
-                                            <p class="text-sm text-gray-600 mb-3">Generate user activity reports</p>
-                                            <button class="w-full bg-gray-600 text-white py-2 px-4 rounded hover:bg-gray-700 text-sm">
-                                                View Reports
-                                            </button>
+                                            <a href="{{ route('admin.manage-roles') }}" class="w-full bg-purple-600 text-white py-2 px-4 rounded hover:bg-purple-700 text-sm block text-center">Manage Roles</a>
                                         </div>
                                     </div>
                                 </div>
