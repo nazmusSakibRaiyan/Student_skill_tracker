@@ -137,24 +137,25 @@
                                         <div class="font-semibold">Admin Dashboard</div>
                                         <div class="text-sm opacity-90">Full system access</div>
                                     </a>
-                                @endif
-                                
-                                @if($user->isClubManager() || $user->isMasterAdmin())
+                                    
+                                    <a href="{{ route('users.index') }}" class="bg-purple-600 text-white p-4 rounded-lg hover:bg-purple-700 text-center">
+                                        <div class="font-semibold">User Management</div>
+                                        <div class="text-sm opacity-90">Manage system users</div>
+                                    </a>
+                                    
+                                    <a href="{{ route('admin.reports') }}" class="bg-indigo-600 text-white p-4 rounded-lg hover:bg-indigo-700 text-center">
+                                        <div class="font-semibold">Reports & Analytics</div>
+                                        <div class="text-sm opacity-90">System reports</div>
+                                    </a>
+                                @elseif($user->isClubManager())
                                     <a href="{{ route('club-manager.dashboard') }}" class="bg-blue-600 text-white p-4 rounded-lg hover:bg-blue-700 text-center">
                                         <div class="font-semibold">Club Manager</div>
                                         <div class="text-sm opacity-90">Manage club activities</div>
                                     </a>
-                                @endif
-                                
-                                <a href="{{ route('student.dashboard') }}" class="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 text-center">
-                                    <div class="font-semibold">Student Dashboard</div>
-                                    <div class="text-sm opacity-90">View your progress</div>
-                                </a>
-                                
-                                @if($user->hasPermission('manage_users'))
-                                    <a href="{{ route('users.index') }}" class="bg-purple-600 text-white p-4 rounded-lg hover:bg-purple-700 text-center">
-                                        <div class="font-semibold">User Management</div>
-                                        <div class="text-sm opacity-90">Manage system users</div>
+                                @else
+                                    <a href="{{ route('student.dashboard') }}" class="bg-green-600 text-white p-4 rounded-lg hover:bg-green-700 text-center">
+                                        <div class="font-semibold">Student Dashboard</div>
+                                        <div class="text-sm opacity-90">View your progress</div>
                                     </a>
                                 @endif
                             </div>
