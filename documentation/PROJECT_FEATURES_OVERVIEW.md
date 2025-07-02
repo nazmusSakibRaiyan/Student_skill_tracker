@@ -42,6 +42,13 @@
 ## User Management
 - **Create Club Manager/Student:** (Admin)
 - **Bulk Import Users:** (Admin)
+  - Import multiple users from CSV files
+  - Support for students, club managers, and master admins
+  - Template download with proper format examples
+  - Validation and error handling for duplicate emails and invalid data
+  - Import summary with success/failure statistics
+  - Activity logging for audit purposes
+  - **📖 Detailed Documentation:** See [BULK_IMPORT_USERS.md](BULK_IMPORT_USERS.md)
 - **Enhanced Role Management:** (Master Admin only)
   - Dedicated role management interface accessible via "Manage Roles" from Users page
   - Comprehensive user filtering by role (Students, Club Managers, All)

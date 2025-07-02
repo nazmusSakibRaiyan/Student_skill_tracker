@@ -133,6 +133,28 @@ Route::middleware(['auth', 'verified', 'role:master_admin'])->group(function () 
 - `routes/web.php` (modified)
 - `bootstrap/app.php` (modified)
 
----
+## Activity Types Logged
+
+#### User Management Activities
+- **User Creation:** Individual and bulk user creation events
+- **User Deletion:** User removal with admin attribution
+- **Role Changes:** Role assignments and modifications
+- **Ban/Unban Actions:** Club manager status changes
+- **Bulk Import Operations:** CSV import activities with statistics
+  - Import attempts and results
+  - Validation errors and skip reasons
+  - Success/failure metrics per import session
+
+#### Authentication & Authorization
+- **Login Attempts:** Successful and failed login events
+- **Permission Changes:** Role and permission modifications
+- **Email Verification:** Account verification activities
+
+#### System Operations
+- **Database Changes:** Critical data modifications
+- **File Operations:** Upload, download, and deletion activities
+- **Configuration Changes:** System setting modifications
+
+### Activity Context Information
 
 This feature provides essential monitoring capabilities for maintaining system health and security in the Student Skill Tracker application.

@@ -69,6 +69,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/users/create-student', [RoleTestController::class, 'storeStudent']);
         // List all users (with filter)
         Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+        // Bulk import users
+        Route::get('/admin/users/import', [\App\Http\Controllers\Admin\UserController::class, 'showImportForm'])->name('admin.users.import');
+        Route::post('/admin/users/import', [\App\Http\Controllers\Admin\UserController::class, 'importUsers'])->name('admin.users.import.process');
+        Route::get('/admin/users/import/template', [\App\Http\Controllers\Admin\UserController::class, 'downloadTemplate'])->name('admin.users.import.template');
         // Role management
         Route::get('/admin/manage-roles', [\App\Http\Controllers\Admin\UserController::class, 'manageRoles'])->name('admin.manage-roles');
         Route::delete('/admin/users/{user_id}', [\App\Http\Controllers\Admin\UserController::class, 'deleteUser'])->name('admin.users.delete');

@@ -170,9 +170,22 @@ Route::middleware(['auth', 'verified', 'role:master_admin'])->group(function () 
 - **Validation Errors:** Input validation with user-friendly messages
 
 ## Related Features
-- **User Creation:** Integration with user creation workflows
-- **Club Management:** Connected to club manager assignments
-- **System Logs:** All actions logged in system activity
+
+### Bulk Import Users
+The Enhanced Role Management system works seamlessly with the Bulk Import Users feature:
+- **CSV Import:** Mass import of users with automatic role assignment
+- **Post-Import Management:** Imported users immediately appear in role management
+- **Template Integration:** Import templates match role management categories
+- **Validation Sync:** Same validation rules apply to both manual and bulk creation
+
+📖 **Detailed Documentation:** See [BULK_IMPORT_USERS.md](BULK_IMPORT_USERS.md) for complete import documentation.
+
+### User Creation
+- **Individual Creation:** Manual user creation through dedicated forms
+- **Role Assignment:** Automatic role assignment during creation
+- **Email Verification:** Automatic email verification setup
+
+## Integration Points
 
 ## Files Modified/Created
 - `app/Http/Controllers/Admin/UserController.php` (enhanced)

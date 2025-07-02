@@ -62,14 +62,13 @@
                                             <a href="{{ route('admin.users.create-club-manager') }}" class="block w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 text-sm mb-2 text-center">Add Club Manager</a>
                                             <a href="{{ route('admin.users.create-student') }}" class="block w-full bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700 text-sm text-center">Add Student</a>
                                         </div>
-                                        
-                                        <div class="p-4 border border-gray-200 rounded-lg">
-                                            <h4 class="font-medium text-gray-900 mb-2">Bulk Import</h4>
-                                            <p class="text-sm text-gray-600 mb-3">Import multiple users from CSV</p>
-                                            <button class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 text-sm">
-                                                Import Users
-                                            </button>
-                                        </div>
+                                                          <div class="p-4 border border-gray-200 rounded-lg">
+                            <h4 class="font-medium text-gray-900 mb-2">Bulk Import</h4>
+                            <p class="text-sm text-gray-600 mb-3">Import multiple users from CSV/XLSX</p>
+                            <a href="{{ route('admin.users.import') }}" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 text-sm block text-center">
+                                Import Users
+                            </a>
+                        </div>
                                         
                                         <div class="p-4 border border-gray-200 rounded-lg mb-6">
                                             <h4 class="font-medium text-gray-900 mb-2">Pending Student Approvals</h4>

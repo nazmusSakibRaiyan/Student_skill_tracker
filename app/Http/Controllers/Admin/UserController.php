@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Role;
+use App\Imports\UsersImport;
 
 class UserController extends Controller
 {
@@ -127,5 +129,131 @@ class UserController extends Controller
             
             return back()->with('error', 'Failed to delete user: ' . $e->getMessage());
         }
+    }
+
+    public function showImportForm()
+    {
+        return view('admin.import-users');
+    }
+
+    public function importUsers(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,txt|max:10240', // 10MB max
+        ]);
+
+        try {
+            $file = $request->file('file');
+            $path = $file->getRealPath();
+            
+            $imported = 0;
+            $skipped = 0;
+            $errors = [];
+
+            if (($handle = fopen($path, 'r')) !== FALSE) {
+                $header = fgetcsv($handle); // Read header row
+                
+                // Validate header
+                $expectedHeaders = ['name', 'email', 'role', 'password'];
+                $headerMap = [];
+                foreach ($expectedHeaders as $expected) {
+                    $index = array_search(strtolower($expected), array_map('strtolower', $header));
+                    if ($index === false && $expected !== 'password') {
+                        throw new \Exception("Required column '{$expected}' not found in CSV");
+                    }
+                    $headerMap[$expected] = $index;
+                }
+
+                while (($row = fgetcsv($handle)) !== FALSE) {
+                    try {
+                        $name = $row[$headerMap['name']] ?? '';
+                        $email = $row[$headerMap['email']] ?? '';
+                        $role = $row[$headerMap['role']] ?? '';
+                        $password = isset($headerMap['password']) ? ($row[$headerMap['password']] ?? 'password123') : 'password123';
+
+                        // Validate data
+                        if (empty($name) || empty($email) || empty($role)) {
+                            $skipped++;
+                            $errors[] = "Missing required data for row with email: {$email}";
+                            continue;
+                        }
+
+                        // Check if user already exists
+                        if (User::where('email', $email)->exists()) {
+                            $skipped++;
+                            $errors[] = "User with email {$email} already exists - skipped";
+                            continue;
+                        }
+
+                        // Get role
+                        $roleObj = Role::where('name', strtolower($role))->first();
+                        if (!$roleObj) {
+                            $skipped++;
+                            $errors[] = "Invalid role '{$role}' for {$email} - skipped";
+                            continue;
+                        }
+
+                        // Create user
+                        $user = User::create([
+                            'name' => $name,
+                            'email' => $email,
+                            'password' => \Hash::make($password),
+                            'email_verified_at' => now(),
+                        ]);
+
+                        // Assign role
+                        $user->role_id = $roleObj->id;
+                        $user->save();
+
+                        $imported++;
+
+                    } catch (\Exception $e) {
+                        $skipped++;
+                        $errors[] = "Error importing {$email}: " . $e->getMessage();
+                    }
+                }
+                fclose($handle);
+            }
+
+            $message = "Import completed! ";
+            $message .= "Imported: {$imported} users. ";
+            
+            if ($skipped > 0) {
+                $message .= "Skipped: {$skipped} users. ";
+            }
+
+            if (!empty($errors)) {
+                $message .= "Errors occurred - check logs.";
+                \Log::warning('User import errors', [
+                    'errors' => $errors,
+                    'admin' => auth()->user()->email
+                ]);
+            }
+
+            return back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            \Log::error('User import failed', [
+                'error' => $e->getMessage(),
+                'admin' => auth()->user()->email
+            ]);
+            
+            return back()->with('error', 'Import failed: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="user_import_template.csv"',
+        ];
+
+        $template = "name,email,role,password\n";
+        $template .= "John Doe,john@example.com,student,password123\n";
+        $template .= "Jane Smith,jane@example.com,club_manager,password123\n";
+        $template .= "Admin User,admin@example.com,master_admin,password123\n";
+
+        return response($template, 200, $headers);
     }
 }
