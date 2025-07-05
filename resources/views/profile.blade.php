@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Profile - Student Skill Tracker</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -30,6 +31,9 @@
 
         <!-- Main Content -->
         <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Emergency Announcements -->
+            @include('components.announcement-banner')
+            
             <div class="px-4 py-6 sm:px-0">
                 <div class="bg-white overflow-hidden shadow rounded-lg">
                     <div class="px-4 py-5 sm:p-6">

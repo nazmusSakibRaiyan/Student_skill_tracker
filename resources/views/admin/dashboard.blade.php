@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Admin Dashboard - Student Skill Tracker</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -10,6 +11,9 @@
     @include('components.navigation')
     
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Emergency Announcements -->
+        @include('components.announcement-banner')
+        
         <!-- Dashboard Header -->
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg mb-6">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -79,6 +83,20 @@
                     <div class="ml-4">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Reports</h3>
                         <p class="text-sm text-gray-600 dark:text-gray-400">View system analytics and reports</p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="{{ route('admin.announcements.index') }}" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+                <div class="flex items-center">
+                    <div class="bg-red-100 dark:bg-red-900 p-3 rounded-lg">
+                        <svg class="h-6 w-6 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z"/>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Announcements</h3>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Broadcast messages to users</p>
                     </div>
                 </div>
             </a>

@@ -206,6 +206,20 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function clubManagers(): HasMany
     {
-        return $this->hasMany(ClubManager::class, 'user_id');
+        return $this->hasMany(ClubManager::class);
+    }
+
+    public function announcements()
+    {
+        return $this->belongsToMany(Announcement::class, 'announcement_reads')
+                    ->withPivot('read_at')
+                    ->withTimestamps();
+    }
+
+    public function unreadAnnouncements()
+    {
+        return Announcement::active()->get()->filter(function ($announcement) {
+            return $announcement->isVisibleToUser($this) && !$announcement->hasBeenReadBy($this);
+        });
     }
 }

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Student Dashboard - Student Skill Tracker</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -10,6 +11,9 @@
     @include('components.navigation')
     
     <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Emergency Announcements -->
+        @include('components.announcement-banner')
+        
         <!-- Dashboard Header -->
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm rounded-lg mb-6">
             <div class="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -300,9 +304,9 @@
                                 <button class="w-full text-left p-2 text-sm bg-blue-50 text-blue-700 rounded hover:bg-blue-100 transition-colors">
                                     View My Progress
                                 </button>
-                                <button class="w-full text-left p-2 text-sm bg-purple-50 text-purple-700 rounded hover:bg-purple-100 transition-colors">
+                                <a href="{{ route('profile') }}" class="w-full text-left p-2 text-sm bg-purple-50 text-purple-700 rounded hover:bg-purple-100 transition-colors block">
                                     Edit Profile
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>

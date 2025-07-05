@@ -73,8 +73,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/users/import', [\App\Http\Controllers\Admin\UserController::class, 'showImportForm'])->name('admin.users.import');
         Route::post('/admin/users/import', [\App\Http\Controllers\Admin\UserController::class, 'importUsers'])->name('admin.users.import.process');
         Route::get('/admin/users/import/template', [\App\Http\Controllers\Admin\UserController::class, 'downloadTemplate'])->name('admin.users.import.template');
-        // Role management
-        Route::get('/admin/manage-roles', [\App\Http\Controllers\Admin\UserController::class, 'manageRoles'])->name('admin.manage-roles');
+        // Announcements
+        Route::resource('admin/announcements', \App\Http\Controllers\Admin\AnnouncementController::class)->names([
+            'index' => 'admin.announcements.index',
+            'create' => 'admin.announcements.create',
+            'store' => 'admin.announcements.store',
+            'show' => 'admin.announcements.show',
+            'edit' => 'admin.announcements.edit',
+            'update' => 'admin.announcements.update',
+            'destroy' => 'admin.announcements.destroy',
+        ]);
+        Route::post('/admin/announcements/{announcement}/toggle', [\App\Http\Controllers\Admin\AnnouncementController::class, 'toggle'])->name('admin.announcements.toggle');
+        // ...existing code...
         Route::delete('/admin/users/{user_id}', [\App\Http\Controllers\Admin\UserController::class, 'deleteUser'])->name('admin.users.delete');
         // Ban club manager (web route)
         Route::post('/admin/ban-club-manager', [\App\Http\Controllers\Admin\UserController::class, 'banClubManager'])->name('admin.ban-club-manager');
@@ -89,6 +99,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // All authenticated users (any role)
     Route::get('/student', [RoleTestController::class, 'studentDashboard'])->name('student.dashboard');
+    
+    // Mark announcement as read
+    Route::post('/announcements/{announcement}/read', [\App\Http\Controllers\Admin\AnnouncementController::class, 'markAsRead'])->name('announcements.read');
     
     // Permission-based route
     Route::middleware(['permission:manage_users'])->group(function () {
