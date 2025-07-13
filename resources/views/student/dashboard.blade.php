@@ -113,18 +113,17 @@
                             </div>
                         </div>
 
-                        <!-- Club Count -->
+                        <!-- Total Skill Points -->
                         <div class="bg-white p-6 border border-gray-200 rounded-lg">
                             <div class="flex items-center">
                                 <div class="bg-purple-100 p-3 rounded-lg">
-                                    <svg class="h-6 w-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM9 7a1 1 0 112 0 1 1 0 01-2 0zM2 18a6 6 0 1112 0H2z"/>
+                                    <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    @php $clubCount = auth()->user()->clubs->count(); @endphp
-                                    <h3 class="text-lg font-semibold text-gray-900">{{ $clubCount }}</h3>
-                                    <p class="text-sm text-gray-600">Joined Clubs</p>
+                                    <h3 class="text-lg font-semibold text-gray-900">{{ isset($totalPoints) ? number_format($totalPoints) : 0 }}</h3>
+                                    <p class="text-sm text-gray-600">Total Skill Points</p>
                                 </div>
                             </div>
                         </div>
@@ -134,26 +133,40 @@
                         <div class="bg-white p-6 border border-gray-200 rounded-lg">
                             <h3 class="text-lg font-semibold text-gray-900 mb-2">My Skills</h3>
                             <p class="text-gray-600 text-sm mb-4">View and track your skill development</p>
-                            <div class="space-y-2">
-                                <div class="bg-blue-100 p-3 rounded">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm font-medium">Programming</span>
-                                        <span class="text-xs bg-blue-600 text-white px-2 py-1 rounded">Beginner</span>
-                                    </div>
-                                    <div class="mt-2 bg-blue-200 rounded-full h-2">
-                                        <div class="bg-blue-600 h-2 rounded-full" style="width: 30%"></div>
-                                    </div>
+                            
+                            @if(isset($studentSkills) && $studentSkills->count() > 0)
+                                <div class="space-y-2">
+                                    @foreach($studentSkills as $clubId => $clubSkills)
+                                        @foreach($clubSkills as $skill)
+                                            <div class="bg-{{ ['blue', 'green', 'purple', 'indigo', 'pink'][($loop->parent->index + $loop->index) % 5] }}-100 p-3 rounded">
+                                                <div class="flex justify-between items-center">
+                                                    <span class="text-sm font-medium">{{ $skill->skillCategory->name }}</span>
+                                                    <span class="text-xs bg-{{ ['blue', 'green', 'purple', 'indigo', 'pink'][($loop->parent->index + $loop->index) % 5] }}-600 text-white px-2 py-1 rounded">
+                                                        Level {{ $skill->level }}
+                                                    </span>
+                                                </div>
+                                                <div class="text-xs text-gray-600 mb-1">{{ $skill->club->name }} • {{ $skill->total_points }} points</div>
+                                                <div class="mt-2 bg-{{ ['blue', 'green', 'purple', 'indigo', 'pink'][($loop->parent->index + $loop->index) % 5] }}-200 rounded-full h-2">
+                                                    <div class="bg-{{ ['blue', 'green', 'purple', 'indigo', 'pink'][($loop->parent->index + $loop->index) % 5] }}-600 h-2 rounded-full" style="width: {{ min(100, $skill->progress_percentage) }}%"></div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @endforeach
                                 </div>
-                                <div class="bg-green-100 p-3 rounded">
-                                    <div class="flex justify-between items-center">
-                                        <span class="text-sm font-medium">Design</span>
-                                        <span class="text-xs bg-green-600 text-white px-2 py-1 rounded">Intermediate</span>
-                                    </div>
-                                    <div class="mt-2 bg-green-200 rounded-full h-2">
-                                        <div class="bg-green-600 h-2 rounded-full" style="width: 60%"></div>
-                                    </div>
+                                <div class="mt-4">
+                                    <a href="{{ route('student.skills.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        View All Skills →
+                                    </a>
                                 </div>
-                            </div>
+                            @else
+                                <div class="text-center py-4">
+                                    <div class="text-gray-400 text-4xl mb-2">📊</div>
+                                    <p class="text-gray-500 text-sm mb-3">No skills developed yet</p>
+                                    <a href="{{ route('student.skills.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        Get Started →
+                                    </a>
+                                </div>
+                            @endif
                         </div>
                         
                         <div class="bg-white p-6 border border-gray-200 rounded-lg">

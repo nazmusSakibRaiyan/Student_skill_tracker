@@ -222,4 +222,36 @@ class User extends Authenticatable implements MustVerifyEmail
             return $announcement->isVisibleToUser($this) && !$announcement->hasBeenReadBy($this);
         });
     }
+
+    /**
+     * Get all student skills for this user
+     */
+    public function studentSkills(): HasMany
+    {
+        return $this->hasMany(StudentSkill::class);
+    }
+
+    /**
+     * Get student skills for a specific club
+     */
+    public function getSkillsForClub(Club $club)
+    {
+        return $this->studentSkills()->where('club_id', $club->id)->with('skillCategory')->get();
+    }
+
+    /**
+     * Get total skill points across all clubs
+     */
+    public function getTotalSkillPoints(): int
+    {
+        return $this->studentSkills()->sum('total_points');
+    }
+
+    /**
+     * Get average skill level across all clubs
+     */
+    public function getAverageSkillLevel(): float
+    {
+        return $this->studentSkills()->avg('level') ?? 0;
+    }
 }

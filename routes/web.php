@@ -69,6 +69,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/users/create-student', [RoleTestController::class, 'storeStudent']);
         // List all users (with filter)
         Route::get('/admin/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('admin.users.index');
+        // Manage roles
+        Route::get('/admin/manage-roles', [\App\Http\Controllers\Admin\UserController::class, 'manageRoles'])->name('admin.manage-roles');
         // Bulk import users
         Route::get('/admin/users/import', [\App\Http\Controllers\Admin\UserController::class, 'showImportForm'])->name('admin.users.import');
         Route::post('/admin/users/import', [\App\Http\Controllers\Admin\UserController::class, 'importUsers'])->name('admin.users.import.process');
@@ -149,6 +151,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/clubs/{club}/events', [EventController::class, 'store']);
         Route::put('/clubs/{club}/events/{event}', [EventController::class, 'update']);
         Route::delete('/clubs/{club}/events/{event}', [EventController::class, 'destroy']);
+        
+        // Skill Management Routes for Club Managers
+        Route::prefix('clubs/{club}/skills')->name('skills.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\SkillManagementController::class, 'index'])->name('index');
+            Route::get('/members', [\App\Http\Controllers\SkillManagementController::class, 'showMembers'])->name('members');
+            Route::get('/member/{user}', [\App\Http\Controllers\SkillManagementController::class, 'showMemberProfile'])->name('member-profile');
+            Route::get('/member/{user}/assign', [\App\Http\Controllers\SkillManagementController::class, 'showAssignForm'])->name('assign-form');
+            Route::post('/member/{user}/assign', [\App\Http\Controllers\SkillManagementController::class, 'assignPoints'])->name('assign-points');
+            Route::get('/categories', [\App\Http\Controllers\SkillManagementController::class, 'manageCategories'])->name('categories');
+            Route::post('/categories', [\App\Http\Controllers\SkillManagementController::class, 'storeCategory'])->name('categories.store');
+            Route::put('/categories/{skillCategory}', [\App\Http\Controllers\SkillManagementController::class, 'updateCategory'])->name('categories.update');
+            Route::delete('/categories/{skillCategory}', [\App\Http\Controllers\SkillManagementController::class, 'deleteCategory'])->name('categories.delete');
+            Route::get('/leaderboard', [\App\Http\Controllers\SkillManagementController::class, 'showLeaderboard'])->name('leaderboard');
+        });
     });
     
     // Admin routes for approving/rejecting students
@@ -176,6 +192,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/events/{event}/enroll', [\App\Http\Controllers\EventEnrollmentController::class, 'enroll'])->name('events.enroll');
         Route::delete('/events/{event}/cancel', [\App\Http\Controllers\EventEnrollmentController::class, 'cancel'])->name('events.cancel');
         Route::get('/my-enrollments', [\App\Http\Controllers\EventEnrollmentController::class, 'getUserEnrollments'])->name('student.enrollments');
+        
+        // Student Skill Progress Routes
+        Route::prefix('my-skills')->name('student.skills.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\StudentSkillController::class, 'index'])->name('index');
+            Route::get('/club/{club}', [\App\Http\Controllers\StudentSkillController::class, 'showClubSkills'])->name('club');
+            Route::get('/club/{club}/category/{skillCategory}', [\App\Http\Controllers\StudentSkillController::class, 'showCategoryProgress'])->name('category');
+            Route::get('/history', [\App\Http\Controllers\StudentSkillController::class, 'showHistory'])->name('history');
+            Route::get('/achievements', [\App\Http\Controllers\StudentSkillController::class, 'showAchievements'])->name('achievements');
+        });
     });
 
     // Club Manager routes for managing event enrollments

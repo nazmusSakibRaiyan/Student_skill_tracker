@@ -39,6 +39,9 @@
                         <a href="{{ route('student.dashboard') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
                             My Dashboard
                         </a>
+                        <a href="{{ route('student.skills.index') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+                            My Skills
+                        </a>
                     @endif
                     
                     <a href="{{ route('profile') }}" class="text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium transition-colors">
@@ -118,6 +121,9 @@
                 @else
                     <a href="{{ route('student.dashboard') }}" class="block text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium">
                         My Dashboard
+                    </a>
+                    <a href="{{ route('student.skills.index') }}" class="block text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium">
+                        My Skills
                     </a>
                 @endif
                 

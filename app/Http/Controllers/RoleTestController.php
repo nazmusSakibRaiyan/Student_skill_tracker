@@ -51,8 +51,50 @@ class RoleTestController extends Controller
             $totalEnrollments = $user->eventEnrollments()->count();
             $completedEvents = $user->eventEnrollments()->where('status', 'completed')->count();
         }
+
+        // Get skill data for all users (not just students)
+        // Get all clubs the user is approved for
+        $clubs = $user->clubs()->wherePivot('status', 'approved')->with([
+            'skillCategories' => function($q) {
+                $q->where('active', true);
+            }
+        ])->get();
         
-        return view('student.dashboard', compact('recentActivities', 'totalEnrollments', 'completedEvents'));
+        // Get all student skills
+        $studentSkills = \App\Models\StudentSkill::where('user_id', $user->id)
+            ->with(['club', 'skillCategory'])
+            ->get()
+            ->groupBy('club_id');
+        
+        // Calculate overall stats
+        $totalPoints = \App\Models\StudentSkill::where('user_id', $user->id)->sum('total_points');
+        $averageLevel = \App\Models\StudentSkill::where('user_id', $user->id)->avg('level') ?? 0;
+        $totalClubs = $clubs->count();
+        $totalCategories = $clubs->sum(function($club) {
+            return $club->skillCategories->count();
+        });
+        
+        // Recent skill activity
+        $recentSkillActivity = \App\Models\SkillPointHistory::whereHas('studentSkill', function($q) use ($user) {
+            $q->where('user_id', $user->id);
+        })
+        ->with(['studentSkill.skillCategory', 'studentSkill.club', 'assignedBy'])
+        ->latest()
+        ->take(5)
+        ->get();
+        
+        return view('student.dashboard', compact(
+            'recentActivities', 
+            'totalEnrollments', 
+            'completedEvents',
+            'clubs',
+            'studentSkills', 
+            'totalPoints', 
+            'averageLevel', 
+            'totalClubs', 
+            'totalCategories',
+            'recentSkillActivity'
+        ));
     }
 
     /**
