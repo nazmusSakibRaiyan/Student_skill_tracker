@@ -111,7 +111,41 @@ class RoleTestController extends Controller
             });
         }
         $users = $query->orderBy('name')->paginate(20);
-        return view('admin.users', compact('totalUsers', 'users', 'role'));
+        
+        // Calculate real role distribution statistics from database
+        $studentCount = \App\Models\User::whereHas('role', function($q) {
+            $q->where('name', 'student');
+        })->count();
+        
+        $clubManagerCount = \App\Models\User::whereHas('role', function($q) {
+            $q->where('name', 'club_manager');
+        })->count();
+        
+        $adminCount = \App\Models\User::whereHas('role', function($q) {
+            $q->where('name', 'master_admin');
+        })->count();
+        
+        // Calculate percentages
+        $studentPercentage = $totalUsers > 0 ? round(($studentCount / $totalUsers) * 100) : 0;
+        $clubManagerPercentage = $totalUsers > 0 ? round(($clubManagerCount / $totalUsers) * 100) : 0;
+        $adminPercentage = $totalUsers > 0 ? round(($adminCount / $totalUsers) * 100) : 0;
+        
+        $roleStats = [
+            'students' => [
+                'count' => $studentCount,
+                'percentage' => $studentPercentage
+            ],
+            'club_managers' => [
+                'count' => $clubManagerCount,
+                'percentage' => $clubManagerPercentage
+            ],
+            'admins' => [
+                'count' => $adminCount,
+                'percentage' => $adminPercentage
+            ]
+        ];
+        
+        return view('admin.users', compact('totalUsers', 'users', 'role', 'roleStats'));
     }
 
     /**

@@ -105,29 +105,32 @@
                                         <div>
                                             <div class="flex justify-between text-sm mb-1">
                                                 <span>Students</span>
-                                                <span>35 (74%)</span>
+                                                <span>{{ $roleStats['students']['count'] }} ({{ $roleStats['students']['percentage'] }}%)</span>
                                             </div>
                                             <div class="bg-green-200 rounded-full h-2">
-                                                <div class="bg-green-600 h-2 rounded-full" style="width: 74%"></div>
+                                                <div class="bg-green-600 h-2 rounded-full" style="width: {{ $roleStats['students']['percentage'] }}%"></div>
                                             </div>
                                         </div>
                                         <div>
                                             <div class="flex justify-between text-sm mb-1">
                                                 <span>Club Managers</span>
-                                                <span>10 (21%)</span>
+                                                <span>{{ $roleStats['club_managers']['count'] }} ({{ $roleStats['club_managers']['percentage'] }}%)</span>
                                             </div>
                                             <div class="bg-blue-200 rounded-full h-2">
-                                                <div class="bg-blue-600 h-2 rounded-full" style="width: 21%"></div>
+                                                <div class="bg-blue-600 h-2 rounded-full" style="width: {{ $roleStats['club_managers']['percentage'] }}%"></div>
                                             </div>
                                         </div>
                                         <div>
                                             <div class="flex justify-between text-sm mb-1">
                                                 <span>Admins</span>
-                                                <span>2 (5%)</span>
+                                                <span>{{ $roleStats['admins']['count'] }} ({{ $roleStats['admins']['percentage'] }}%)</span>
                                             </div>
                                             <div class="bg-red-200 rounded-full h-2">
-                                                <div class="bg-red-600 h-2 rounded-full" style="width: 5%"></div>
+                                                <div class="bg-red-600 h-2 rounded-full" style="width: {{ $roleStats['admins']['percentage'] }}%"></div>
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
                                         </div>
                                     </div>
                                 </div>

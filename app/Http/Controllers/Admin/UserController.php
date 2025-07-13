@@ -21,7 +21,41 @@ class UserController extends Controller
         }
         $users = $query->orderBy('name')->paginate(20);
         $totalUsers = User::count();
-        return view('admin.users', compact('users', 'role', 'totalUsers'));
+        
+        // Calculate real role distribution statistics from database
+        $studentCount = User::whereHas('role', function($q) {
+            $q->where('name', 'student');
+        })->count();
+        
+        $clubManagerCount = User::whereHas('role', function($q) {
+            $q->where('name', 'club_manager');
+        })->count();
+        
+        $adminCount = User::whereHas('role', function($q) {
+            $q->where('name', 'master_admin');
+        })->count();
+        
+        // Calculate percentages
+        $studentPercentage = $totalUsers > 0 ? round(($studentCount / $totalUsers) * 100) : 0;
+        $clubManagerPercentage = $totalUsers > 0 ? round(($clubManagerCount / $totalUsers) * 100) : 0;
+        $adminPercentage = $totalUsers > 0 ? round(($adminCount / $totalUsers) * 100) : 0;
+        
+        $roleStats = [
+            'students' => [
+                'count' => $studentCount,
+                'percentage' => $studentPercentage
+            ],
+            'club_managers' => [
+                'count' => $clubManagerCount,
+                'percentage' => $clubManagerPercentage
+            ],
+            'admins' => [
+                'count' => $adminCount,
+                'percentage' => $adminPercentage
+            ]
+        ];
+        
+        return view('admin.users', compact('users', 'role', 'totalUsers', 'roleStats'));
     }
 
     public function banClubManager(Request $request)
