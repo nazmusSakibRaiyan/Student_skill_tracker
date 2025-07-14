@@ -165,6 +165,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/categories/{skillCategory}', [\App\Http\Controllers\SkillManagementController::class, 'deleteCategory'])->name('categories.delete');
             Route::get('/leaderboard', [\App\Http\Controllers\SkillManagementController::class, 'showLeaderboard'])->name('leaderboard');
         });
+        
+        // Attendance Management Routes for Club Managers
+        Route::prefix('attendance')->name('attendance.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'index'])->name('index');
+            Route::get('/events/{event}', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'show'])->name('show');
+            Route::post('/events/{event}/mark', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'markAttendance'])->name('mark');
+            Route::post('/events/{event}/bulk-mark', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'bulkMarkAttendance'])->name('bulk-mark');
+            Route::get('/events/{event}/qr-code', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'generateQRCode'])->name('qr-code');
+            Route::get('/events/{event}/export', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'exportAttendance'])->name('export');
+        });
+    });
+    
+    // QR Code Check-in Routes (Public - no authentication required)
+    Route::prefix('attendance')->name('attendance.')->group(function () {
+        Route::get('/qr/{qrCode}', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'qrCheckIn'])->name('qr-checkin');
+        Route::post('/qr/{qrCode}', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'processQRCheckIn'])->name('qr-process');
     });
     
     // Admin routes for approving/rejecting students

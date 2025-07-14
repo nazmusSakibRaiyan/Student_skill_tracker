@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Event extends Model
 {
@@ -20,11 +21,16 @@ class Event extends Model
         'event_type_description',
         'venue_link',
         'max_participants',
+        'qr_code',
+        'attendance_enabled',
+        'attendance_deadline',
     ];
 
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'attendance_deadline' => 'datetime',
+        'attendance_enabled' => 'boolean',
     ];
 
     public function club()
@@ -42,6 +48,11 @@ class Event extends Model
         return $this->belongsToMany(User::class, 'event_enrollments')
                     ->withPivot('status', 'enrolled_at', 'completed_at')
                     ->withTimestamps();
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(EventAttendance::class);
     }
 
     // Check if event allows enrollment (only seminars, workshops, contests)
@@ -86,5 +97,60 @@ class Event extends Model
     public function isFull()
     {
         return $this->max_participants && $this->getEnrollmentCount() >= $this->max_participants;
+    }
+
+    // Generate QR code for attendance
+    public function generateQRCode()
+    {
+        if (!$this->qr_code) {
+            $this->qr_code = 'event_' . $this->id . '_' . Str::random(20);
+            $this->save();
+        }
+        return $this->qr_code;
+    }
+
+    // Check if attendance is enabled for this event
+    public function isAttendanceEnabled()
+    {
+        return $this->attendance_enabled;
+    }
+
+    // Check if attendance deadline has passed
+    public function isAttendanceDeadlinePassed()
+    {
+        return $this->attendance_deadline && now()->gt($this->attendance_deadline);
+    }
+
+    // Get attendance statistics
+    public function getAttendanceStats()
+    {
+        $totalEnrolled = $this->getEnrollmentCount();
+        $totalMarked = $this->attendances()->count();
+        $presentCount = $this->attendances()->present()->count();
+        $lateCount = $this->attendances()->late()->count();
+        $absentCount = $this->attendances()->absent()->count();
+        $notMarkedCount = $totalEnrolled - $totalMarked;
+
+        return [
+            'total_enrolled' => $totalEnrolled,
+            'total_marked' => $totalMarked,
+            'present' => $presentCount,
+            'late' => $lateCount,
+            'absent' => $absentCount,
+            'not_marked' => $notMarkedCount,
+            'attendance_rate' => $totalEnrolled > 0 ? round(($presentCount + $lateCount) / $totalEnrolled * 100, 2) : 0,
+        ];
+    }
+
+    // Check if user has marked attendance
+    public function hasUserMarkedAttendance($userId)
+    {
+        return $this->attendances()->where('user_id', $userId)->exists();
+    }
+
+    // Get user's attendance record
+    public function getUserAttendance($userId)
+    {
+        return $this->attendances()->where('user_id', $userId)->first();
     }
 }

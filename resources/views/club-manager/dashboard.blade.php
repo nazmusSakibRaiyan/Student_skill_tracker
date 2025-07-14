@@ -61,6 +61,7 @@
                                         <a href="{{ route('club-manager.club.add-student-form', $club->id) }}" class="text-green-600 hover:underline ml-2">Add Student</a>
                                         <a href="{{ route('club-manager.skills.index', $club) }}" class="text-purple-600 hover:underline ml-2">Skill Management</a>
                                         <a href="{{ route('club-manager.club.events.index', $club->id) }}" class="text-orange-600 hover:underline ml-2">Events</a>
+                                        <a href="{{ route('club-manager.attendance.index', ['club_id' => $club->id]) }}" class="text-indigo-600 hover:underline ml-2">Attendance</a>
                                     </div>
                                 </li>
                                 <li class="mb-6">

@@ -17,6 +17,7 @@ This document provides an overview of the Student Skill Tracker application, its
 - **Club Management** with student organization and membership
 - **Event Management** (CRUD for managers, viewing for students)
 - **Event Enrollment System** with automatic completion tracking
+- **Attendance Check-In System** with QR code and manual tracking
 - **Participant Slot Management** with capacity limits
 - **Student Dashboard** with real skill data and statistics
 - **Skill Assignment System** for club managers
@@ -39,14 +40,19 @@ This document provides an overview of the Student Skill Tracker application, its
 - Create and manage skill categories for their club
 - Assign skill points to club members
 - Event management (create, edit, delete events)
+- **Attendance tracking** with QR code generation and manual marking
+- **QR code management** with download, print, and sharing options
 - View club member progress and leaderboards
 - Manage event enrollments
+- Export attendance data to CSV
 
 ### Student
 - View personal skill progress across all clubs
 - Track skill history and achievements
 - View club-specific skill categories and progress
 - Enroll in club events
+- **QR code check-in** for event attendance
+- **Self-service attendance** marking via mobile devices
 - View personal leaderboard position
 - Access detailed skill analytics
 

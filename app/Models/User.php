@@ -178,6 +178,22 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get attendance records for the user.
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(EventAttendance::class);
+    }
+
+    /**
+     * Get attendance records marked by this user (for club managers).
+     */
+    public function markedAttendances(): HasMany
+    {
+        return $this->hasMany(EventAttendance::class, 'marked_by');
+    }
+
+    /**
      * Get recent event activities (enrollments and completions).
      */
     public function getRecentEventActivities($limit = 5)

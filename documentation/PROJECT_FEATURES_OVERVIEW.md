@@ -225,4 +225,5 @@ For detailed implementation guides, see the individual documentation files in th
   - Club managers can only manage their assigned clubs. Students can only view their own clubs.
 
 ---
+
 For more details, see the documentation folder and codebase (controllers, Blade views, routes).
