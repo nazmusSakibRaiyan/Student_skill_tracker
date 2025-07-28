@@ -317,4 +317,89 @@ class AttendanceController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+
+    public function analytics(Request $request)
+    {
+        $user = Auth::user();
+        $clubId = $request->get('club_id');
+        $days = $request->get('days', 30);
+        
+        // Get club manager's clubs
+        $clubs = $user->managedClubs()->where('banned', false)->get();
+        
+        // Get attendance trends
+        $trends = Event::getAttendanceTrends($clubId, $days);
+        
+        // Get recent events with detailed analytics
+        $query = Event::with(['club', 'attendances', 'enrollments'])
+            ->whereHas('club.managers', function($q) use ($user) {
+                $q->where('user_id', $user->id)->where('banned', false);
+            })
+            ->where('attendance_enabled', true)
+            ->where('start_date', '>=', now()->subDays($days));
+            
+        if ($clubId) {
+            $query->where('club_id', $clubId);
+        }
+        
+        $events = $query->orderBy('start_date', 'desc')->limit(10)->get();
+        
+        // Calculate overall statistics
+        $overallStats = [
+            'total_events' => $events->count(),
+            'avg_attendance_rate' => $trends->avg('attendance_rate') ?: 0,
+            'total_enrolled' => $trends->sum('total_enrolled'),
+            'total_present' => $trends->sum('total_present'),
+            'best_performing_event' => $trends->sortByDesc('attendance_rate')->first(),
+            'worst_performing_event' => $trends->sortBy('attendance_rate')->first(),
+        ];
+        
+        return view('club-manager.attendance.analytics', compact(
+            'trends', 'events', 'clubs', 'clubId', 'days', 'overallStats'
+        ));
+    }
+
+    public function exportAnalytics(Request $request)
+    {
+        $user = Auth::user();
+        $clubId = $request->get('club_id');
+        $days = $request->get('days', 30);
+        
+        $trends = Event::getAttendanceTrends($clubId, $days);
+        
+        $filename = 'attendance_analytics_' . now()->format('Y-m-d') . '.csv';
+        
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+        
+        $callback = function() use ($trends) {
+            $file = fopen('php://output', 'w');
+            
+            // CSV headers
+            fputcsv($file, [
+                'Event Name',
+                'Date',
+                'Total Enrolled',
+                'Total Present',
+                'Attendance Rate (%)'
+            ]);
+            
+            // CSV data
+            foreach ($trends as $trend) {
+                fputcsv($file, [
+                    $trend['event_name'],
+                    $trend['date'],
+                    $trend['total_enrolled'],
+                    $trend['total_present'],
+                    round($trend['attendance_rate'], 2)
+                ]);
+            }
+            
+            fclose($file);
+        };
+        
+        return response()->streamDownload($callback, $filename, $headers);
+    }
 }

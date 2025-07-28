@@ -5,8 +5,17 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Attendance Management</h1>
-        <p class="mt-2 text-gray-600">Manage attendance for your club events</p>
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Attendance Management</h1>
+                <p class="mt-2 text-gray-600">Manage attendance for your club events</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{{ route('club-manager.attendance.analytics') }}" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    📊 View Analytics
+                </a>
+            </div>
+        </div>
     </div>
 
     <!-- Filters -->

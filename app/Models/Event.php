@@ -153,4 +153,60 @@ class Event extends Model
     {
         return $this->attendances()->where('user_id', $userId)->first();
     }
+
+    // Get attendance analytics for reports
+    public function getAttendanceAnalytics()
+    {
+        $stats = $this->getAttendanceStats();
+        $attendances = $this->attendances()->with('user')->get();
+        
+        return [
+            'overview' => $stats,
+            'by_method' => [
+                'qr_code' => $attendances->where('check_in_method', 'qr_code')->count(),
+                'manual' => $attendances->where('check_in_method', 'manual')->count(),
+            ],
+            'by_hour' => $attendances->groupBy(function($attendance) {
+                return $attendance->checked_in_at ? $attendance->checked_in_at->format('H') : 'N/A';
+            })->map->count(),
+            'early_arrivals' => $attendances->filter(function($attendance) {
+                return $attendance->checked_in_at && 
+                       $attendance->checked_in_at->lt($this->start_date);
+            })->count(),
+            'on_time_arrivals' => $attendances->filter(function($attendance) {
+                return $attendance->checked_in_at && 
+                       $attendance->checked_in_at->between(
+                           $this->start_date, 
+                           $this->start_date->copy()->addMinutes(15)
+                       );
+            })->count(),
+            'late_arrivals' => $attendances->filter(function($attendance) {
+                return $attendance->checked_in_at && 
+                       $attendance->checked_in_at->gt($this->start_date->copy()->addMinutes(15));
+            })->count(),
+        ];
+    }
+
+    // Get attendance trends for multiple events
+    public static function getAttendanceTrends($clubId = null, $days = 30)
+    {
+        $query = static::with(['attendances', 'enrollments'])
+            ->where('attendance_enabled', true)
+            ->where('start_date', '>=', now()->subDays($days));
+            
+        if ($clubId) {
+            $query->where('club_id', $clubId);
+        }
+        
+        return $query->get()->map(function($event) {
+            $stats = $event->getAttendanceStats();
+            return [
+                'event_name' => $event->name,
+                'date' => $event->start_date->format('Y-m-d'),
+                'attendance_rate' => $stats['attendance_rate'],
+                'total_enrolled' => $stats['total_enrolled'],
+                'total_present' => $stats['present'] + $stats['late'],
+            ];
+        });
+    }
 }

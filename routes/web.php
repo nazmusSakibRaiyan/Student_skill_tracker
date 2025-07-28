@@ -169,6 +169,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Attendance Management Routes for Club Managers
         Route::prefix('attendance')->name('attendance.')->group(function () {
             Route::get('/', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'index'])->name('index');
+            Route::get('/analytics', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'analytics'])->name('analytics');
+            Route::get('/analytics/export', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'exportAnalytics'])->name('analytics.export');
             Route::get('/events/{event}', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'show'])->name('show');
             Route::post('/events/{event}/mark', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'markAttendance'])->name('mark');
             Route::post('/events/{event}/bulk-mark', [\App\Http\Controllers\ClubManager\AttendanceController::class, 'bulkMarkAttendance'])->name('bulk-mark');
